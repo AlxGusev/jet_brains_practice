@@ -52,15 +52,15 @@ public class CoffeeMachine {
 
         String input = scanner.nextLine();
 
-        if ("buy".equals(input)) {
+        if (Action.BUY.option.equals(input)) {
             action = Action.BUY;
-        } else if ("fill".equals(input)) {
+        } else if (Action.FILL.option.equals(input)) {
             action = Action.FILL;
-        } else if ("take".equals(input)) {
+        } else if (Action.TAKE.option.equals(input)) {
             action = Action.TAKE;
-        } else if ("remaining".equals(input)) {
+        } else if (Action.REMAINING.option.equals(input)) {
             action = Action.REMAINING;
-        } else if ("exit".equals(input)) {
+        } else if (Action.EXIT.option.equals(input)) {
             action = Action.EXIT;
         } else {
             System.out.println("Incorrect input. Enter proper action from the list");
@@ -216,10 +216,16 @@ public class CoffeeMachine {
     }
 
     enum Action {
-        BUY,
-        FILL,
-        TAKE,
-        REMAINING,
-        EXIT
+        BUY("buy"),
+        FILL("fill"),
+        TAKE("take"),
+        REMAINING("remaining"),
+        EXIT("exit");
+
+        private final String option;
+
+        Action(String option) {
+            this.option = option;
+        }
     }
 }
