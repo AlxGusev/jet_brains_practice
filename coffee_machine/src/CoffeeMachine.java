@@ -1,44 +1,71 @@
 import java.util.Scanner;
 
 public class CoffeeMachine {
+
     public static Scanner scanner = new Scanner(System.in);
     public static int water = 400;
     public static int milk = 400;
     public static int beans = 400;
     public static int disposalCups = 9;
     public static int moneyInMachine = 550;
-    public static String action;
-    public static boolean exit = false;
+    public static Action action;
+    public static Condition currentCondition;
 
     public static void main(String[] args) {
 
-        while (!exit) {
+        while (currentCondition != Condition.NOT_WORKING) {
 
             showMenu();
 
             switch (action) {
-                case "buy":
+                case BUY:
+                    currentCondition = Condition.MAKING_COFFEE;
                     buyCoffee();
                     break;
-                case "fill":
+                case FILL:
+                    currentCondition = Condition.FILLING_OUT;
+                    System.out.println(currentCondition.status);
                     fillOutMachine();
                     break;
-                case "take":
+                case TAKE:
+                    currentCondition = Condition.TAKING_OUT_MONEY;
+                    System.out.println(currentCondition.status);
                     takeMoney();
                     break;
-                case "remaining":
+                case REMAINING:
+                    currentCondition = Condition.SHOWING_REMAINING_RESOURCES;
+                    System.out.println(currentCondition.status);
                     showCoffeeMachine();
                     break;
-                case "exit":
-                    exit = true;
+                case EXIT:
+                    currentCondition = Condition.NOT_WORKING;
+                    System.out.println(currentCondition.status);
                     break;
             }
         }
     }
 
     public static void showMenu() {
+        currentCondition = Condition.WORKING;
+        System.out.println(currentCondition.status);
         System.out.println("Write action (buy, fill, take, remaining, exit):");
-        action = scanner.nextLine();
+
+        String input = scanner.nextLine();
+
+        if ("buy".equals(input)) {
+            action = Action.BUY;
+        } else if ("fill".equals(input)) {
+            action = Action.FILL;
+        } else if ("take".equals(input)) {
+            action = Action.TAKE;
+        } else if ("remaining".equals(input)) {
+            action = Action.REMAINING;
+        } else if ("exit".equals(input)) {
+            action = Action.EXIT;
+        } else {
+            System.out.println("Incorrect input. Enter proper action from the list");
+            showMenu();
+        }
     }
 
     public static void showCoffeeMachine() {
@@ -51,39 +78,54 @@ public class CoffeeMachine {
     }
 
     public static void fillOutMachine() {
-        System.out.println("Write how many ml of water do you want to add: ");
+        water += addWater();
+        milk += addMilk();
+        beans += addBeans();
+        disposalCups += addDisposalCups();
+    }
+
+    public static int addWater() {
         int addWater = 0;
+        System.out.println("Write how many ml of water do you want to add: ");
         try {
             addWater = Integer.parseInt(scanner.nextLine());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error!!! Incorrect input");
         }
-        System.out.println("Write how many ml of milk do you want to add: ");
+        return addWater;
+    }
+
+    public static int addMilk() {
         int addMilk = 0;
+        System.out.println("Write how many ml of milk do you want to add: ");
         try {
             addMilk = Integer.parseInt(scanner.nextLine());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error!!! Incorrect input");
         }
-        System.out.println("Write how many grams of coffee beans do you want to add: ");
+        return addMilk;
+    }
+
+    public static int addBeans() {
         int addBeans = 0;
+        System.out.println("Write how many grams of coffee beans do you want to add: ");
         try {
             addBeans = Integer.parseInt(scanner.nextLine());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error!!! Incorrect input");
         }
-        System.out.println("Write how many disposable cups of coffee do you want to add: ");
+        return addBeans;
+    }
+
+    public static int addDisposalCups() {
         int addDisposalCups = 0;
+        System.out.println("Write how many disposable cups of coffee do you want to add: ");
         try {
             addDisposalCups = Integer.parseInt(scanner.nextLine());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error!!! Incorrect input");
         }
-
-        water += addWater;
-        milk += addMilk;
-        beans += addBeans;
-        disposalCups += addDisposalCups;
+        return addDisposalCups;
     }
 
     public static void takeMoney() {
@@ -92,27 +134,22 @@ public class CoffeeMachine {
     }
 
     public static void buyCoffee() {
-
         int pick = 0;
-
         System.out.println("What do you want to buy? 1 - espresso, 2 - latte, 3 - cappuccino:");
 
         try {
             pick = Integer.parseInt(scanner.nextLine());
+            if (pick  > 3) {
+                System.out.println("Error!!! Wrong number");
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Error!!! Incorrect input");
         }
 
         switch (pick) {
             case 1:
-                if (water < 250) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (beans < 16) {
-                    System.out.println("Sorry, not enough beans!");
-                } else if (disposalCups == 0) {
-                    System.out.println("Sorry, not enough disposable cups");
-                } else {
-                    System.out.println("I have enough resources, making you a coffee!");
+                checkingResources(pick);
+                if (currentCondition == Condition.MAKING_COFFEE){
                     water -= 250;
                     beans -= 16;
                     disposalCups--;
@@ -120,16 +157,8 @@ public class CoffeeMachine {
                 }
                 break;
             case 2:
-                if (water < 350) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (milk < 75) {
-                    System.out.println("Sorry, not enough milk!");
-                } else if (beans < 16) {
-                    System.out.println("Sorry, not enough beans!");
-                } else if (disposalCups == 0) {
-                    System.out.println("Sorry, not enough disposable cups");
-                } else {
-                    System.out.println("I have enough resources, making you a coffee!");
+                checkingResources(pick);
+                if (currentCondition == Condition.MAKING_COFFEE){
                     water -= 350;
                     milk -= 75;
                     beans -= 20;
@@ -138,16 +167,8 @@ public class CoffeeMachine {
                 }
                 break;
             case 3:
-                if (water < 200) {
-                    System.out.println("Sorry, not enough water!");
-                } else if (milk < 100) {
-                    System.out.println("Sorry, not enough milk!");
-                } else if (beans < 12) {
-                    System.out.println("Sorry, not enough beans!");
-                } else if (disposalCups == 0) {
-                    System.out.println("Sorry, not enough disposable cups");
-                } else {
-                    System.out.println("I have enough resources, making you a coffee!");
+                checkingResources(pick);
+                if (currentCondition == Condition.MAKING_COFFEE){
                     water -= 200;
                     milk -= 100;
                     beans -= 12;
@@ -156,5 +177,49 @@ public class CoffeeMachine {
                 }
                 break;
         }
+    }
+
+    public static void checkingResources(int typeOfCoffee) {
+        currentCondition = Condition.CHECKING_RESOURCES;
+        System.out.println(currentCondition.status);
+
+        if ((typeOfCoffee == 1 && water < 250) || (typeOfCoffee == 2 && water < 350) || (typeOfCoffee == 3 && water < 200)){
+            System.out.println("Sorry, not enough water!");
+        } else if ((typeOfCoffee == 2 && milk < 75) || (typeOfCoffee == 3 && milk < 200)) {
+            System.out.println("Sorry, not enough milk!");
+        } else if ((typeOfCoffee == 1 && beans < 16) || (typeOfCoffee == 2 && beans < 16) || (typeOfCoffee == 3 && beans < 12)){
+            System.out.println("Sorry, not enough beans!");
+        } else if (disposalCups == 0) {
+            System.out.println("Sorry, not enough disposable cups");
+        } else {
+            System.out.println("I have enough resources, making you a coffee!");
+            currentCondition = Condition.MAKING_COFFEE;
+            System.out.println(currentCondition.status);
+            System.out.println("Coffee is ready");
+        }
+    }
+
+    enum Condition {
+        WORKING("Working..."),
+        NOT_WORKING("Coffee Machine is off"),
+        MAKING_COFFEE("Making coffee..."),
+        FILLING_OUT("Filling out..."),
+        TAKING_OUT_MONEY("Taking out money..."),
+        SHOWING_REMAINING_RESOURCES("Showing resources..."),
+        CHECKING_RESOURCES("Checking resources...");
+
+        private final String status;
+
+        Condition(String status) {
+            this.status = status;
+        }
+    }
+
+    enum Action {
+        BUY,
+        FILL,
+        TAKE,
+        REMAINING,
+        EXIT
     }
 }
