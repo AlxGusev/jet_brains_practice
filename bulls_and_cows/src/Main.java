@@ -11,10 +11,7 @@ public class Main {
     public static String codeString;
     public static String inputString;
     public static boolean gameOn = true;
-
-
-
-
+    
     public static void startGame() {
 
         levelOfDifficulty = 0;
