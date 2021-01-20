@@ -5,56 +5,59 @@ public class Main {
 
     public static Scanner scanner = new Scanner(System.in);
     public static int levelOfDifficulty;
-    public static Integer[] digitsArray;
+    public static char[] charArray;
     public static int turnNumber = 1;
-    public static StringBuilder codeBuilder = new StringBuilder();
     public static String codeString;
     public static String inputString;
     public static boolean gameOn = true;
+    public static int secretCodeLength;
+
+
+
 
     public static void startGame() {
 
         levelOfDifficulty = 0;
 
-        System.out.println("Please, enter the secret code's length:");
+        System.out.println("Input the length of the secret code:");
+        secretCodeLength = Integer.parseInt(scanner.nextLine());
+        System.out.println("Input the number of possible symbols in the code:");
+        levelOfDifficulty = Integer.parseInt(scanner.nextLine());
 
-        try {
-            levelOfDifficulty = Integer.parseInt(scanner.nextLine());
-        } catch (Exception e) {
-            System.out.println("Exit");
-        }
-
-        if (levelOfDifficulty > 10) {
+        if (levelOfDifficulty > 36) {
             System.out.println("Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.");
             System.exit(0);
         }
 
-        digitsArray = new Integer[levelOfDifficulty];
+        char[] alphabet = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();
 
-        System.out.println("Okay, let's start a game!");
+        StringBuilder currentLevelOfDifficulty = new StringBuilder();
+        currentLevelOfDifficulty.append(alphabet, 0, levelOfDifficulty);
 
-        digitsArray[0] = ThreadLocalRandom.current().nextInt(9);
+        charArray = new char[secretCodeLength];
 
-        while (digitsArray[0] == 0) {
-            digitsArray[0] = ThreadLocalRandom.current().nextInt(9);
-        }
-
-        for (int i = 1; i < digitsArray.length; i++) {
-            digitsArray[i] = ThreadLocalRandom.current().nextInt(9);
+        for (int i = 0; i < charArray.length; i++) {
+            int randomPickFromAlphabet = ThreadLocalRandom.current().nextInt(levelOfDifficulty);
+            charArray[i] = currentLevelOfDifficulty.charAt(randomPickFromAlphabet);
             for (int j = 0; j < i; j++) {
-                if ((digitsArray[j].equals(digitsArray[i]))) {
-                    digitsArray[i] = ThreadLocalRandom.current().nextInt(9);
-                    j = 0;
-                } else if ((digitsArray[i].equals(digitsArray[0]))) {
-                    digitsArray[i] = ThreadLocalRandom.current().nextInt(9);
+                if (charArray[j] == charArray[i]) {
+                    randomPickFromAlphabet = ThreadLocalRandom.current().nextInt(levelOfDifficulty);
+                    charArray[i] = currentLevelOfDifficulty.charAt(randomPickFromAlphabet);
                     j = 0;
                 }
             }
         }
-        for (int a : digitsArray) {
-            codeBuilder.append(a);
+
+        if (levelOfDifficulty <= 10) {
+            System.out.println("The secret is prepared: " + "*".repeat(secretCodeLength) + " " +
+                    "(" + currentLevelOfDifficulty.charAt(0) + "-" + currentLevelOfDifficulty.charAt(levelOfDifficulty - 1) + ").");
+        } else {
+            System.out.println("The secret is prepared: " + "*".repeat(secretCodeLength) + " " +
+                    "(0-9, " + currentLevelOfDifficulty.charAt(10) + "-" + currentLevelOfDifficulty.charAt(levelOfDifficulty - 1) + ").");
         }
-        codeString = codeBuilder.toString();
+
+        System.out.println("Okay, let's start a game!");
+
     }
     public static void nextTurn() {
         System.out.println("Turn " + turnNumber + ":");
@@ -66,7 +69,6 @@ public class Main {
 
         startGame();
         while (gameOn) {
-//            System.out.println(codeString);
             nextTurn();
             guessing();
         }
@@ -78,18 +80,20 @@ public class Main {
         int bull = 0;
         int cow = 0;
 
-        StringBuilder domesticTry = new StringBuilder(codeString);
+        StringBuilder domesticTry = new StringBuilder();
+        domesticTry.append(charArray, 0, secretCodeLength);
 
-        for (int i = 0; i < domesticTry.length(); i++) {
+
+        for (int i = 0; i < inputString.length(); i++) {
             if (inputString.charAt(i) == domesticTry.charAt(i) && domesticTry.charAt(i) != 'X') {
                 bull++;
                 domesticTry.setCharAt(i, 'X');
             }
         }
 
-        for (int i = 0; i < domesticTry.length(); i++) {
+        for (int i = 0; i < inputString.length(); i++) {
             if (domesticTry.charAt(i) != 'X') {
-                for (int j = 0; j < domesticTry.length(); j++) {
+                for (int j = 0; j < inputString.length(); j++) {
                     if (domesticTry.charAt(i) == inputString.charAt(j)) {
                         cow++;
                         break;
@@ -98,15 +102,11 @@ public class Main {
             }
         }
 
-        if (domesticTry.length() == 1 && bull == 1) {
+        if (charArray.length == 1 && bull == 1) {
             System.out.println("Grade: 1 bull");
             System.out.println("Congratulations! You guessed the secret code.");
             gameOn = false;
-        } else if (bull == 1 && codeString.length() == 1) {
-            System.out.println("Grade: 1 bull");
-            System.out.println("Congratulations! You guessed the secret code.");
-            gameOn = false;
-        } else if (bull == codeString.length() && codeString.length() > 1) {
+        } else if (bull == charArray.length && charArray.length > 1) {
             System.out.println("Grade: " + bull + " bulls");
             System.out.println("Congratulations! You guessed the secret code.");
             gameOn = false;
