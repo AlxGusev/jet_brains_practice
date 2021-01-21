@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -7,25 +8,45 @@ public class Main {
     public static int levelOfDifficulty;
     public static char[] charArray;
     public static int turnNumber = 1;
-    public static String codeString;
     public static String inputString;
     public static boolean gameOn = true;
     public static int secretCodeLength;
-
-
-
 
     public static void startGame() {
 
         levelOfDifficulty = 0;
 
         System.out.println("Input the length of the secret code:");
-        secretCodeLength = Integer.parseInt(scanner.nextLine());
-        System.out.println("Input the number of possible symbols in the code:");
-        levelOfDifficulty = Integer.parseInt(scanner.nextLine());
 
-        if (levelOfDifficulty > 36) {
-            System.out.println("Error: can't generate a secret number with a length of 11 because there aren't enough unique digits.");
+        String nextLine = scanner.nextLine();
+
+        if (!nextLine.matches("^\\d*$")) {
+            System.out.println("Error: " + "\"" + nextLine + "\"" + " isn't a valid number.");
+            System.exit(0);
+        } else {
+            secretCodeLength = Integer.parseInt(nextLine);
+        }
+
+        if (secretCodeLength <= 0 || secretCodeLength > 36) {
+            System.out.println("Error");
+            System.exit(0);
+        }
+
+        System.out.println("Input the number of possible symbols in the code:");
+        String nextLine2 = scanner.nextLine();
+
+        if (!nextLine2.matches("^\\d*$")) {
+            System.out.println("Error: " + "\"" + nextLine2 + "\"" + " isn't a valid number.");
+            System.exit(0);
+        } else {
+            levelOfDifficulty = Integer.parseInt(nextLine2);
+        }
+
+        if (levelOfDifficulty < secretCodeLength) {
+            System.out.println("Error: it's not possible to generate a code with a length of " + secretCodeLength + " with " + levelOfDifficulty + " unique symbols.");
+            System.exit(0);
+        } else if (levelOfDifficulty > 36) {
+            System.out.println("Error: maximum number of possible symbols in the code is 36 (0-9, a-z).");
             System.exit(0);
         }
 
@@ -82,6 +103,7 @@ public class Main {
 
         StringBuilder domesticTry = new StringBuilder();
         domesticTry.append(charArray, 0, secretCodeLength);
+        System.out.println(Arrays.toString(charArray));
 
 
         for (int i = 0; i < inputString.length(); i++) {
