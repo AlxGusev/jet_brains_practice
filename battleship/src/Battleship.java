@@ -4,6 +4,7 @@ public class Battleship {
 
     static Scanner scanner = new Scanner(System.in);
     static char[][] board = new char[10][11];
+    static char[][] tagOfWar = new char[10][11];
     static char[] shot;
     static int carrier = 0;
     static int battleship = 0;
@@ -18,7 +19,7 @@ public class Battleship {
     public static void main(String[] args) {
         placeShips();
         System.out.println("The game starts!");
-        showBoard();
+        showBoard(tagOfWar);
         System.out.println("Take a shot!");
         int turn = 0;
         while (turn == 0) {
@@ -54,19 +55,24 @@ public class Battleship {
 
         if (board[y1][x1] == 'O') {
             board[y1][x1] = 'X';
-            showBoard();
+            tafOfWarBoard();
+            showBoard(tagOfWar);
             System.out.println("You hit a ship!");
+            showBoard(board);
         } else {
             board[y1][x1] = 'M';
-            showBoard();
+            tafOfWarBoard();
+            showBoard(tagOfWar);
             System.out.println("You missed!");
+            showBoard(board);
         }
     }
 
     static void placeShips() {
-        createBoard();
+        createBoard(board);
+        createBoard(tagOfWar);
 
-        showBoard();
+        showBoard(board);
 
         System.out.println("Enter the coordinates of the Aircraft Carrier (5 cells):");
 
@@ -78,7 +84,7 @@ public class Battleship {
                 }
             }
         }
-        showBoard();
+        showBoard(board);
 
         System.out.println("Enter the coordinates of the Battleship (4 cells):");
         while (battleship == 0) {
@@ -89,7 +95,7 @@ public class Battleship {
                 }
             }
         }
-        showBoard();
+        showBoard(board);
 
         System.out.println("Enter the coordinates of the Submarine (3 cells):");
         while (submarine == 0) {
@@ -100,7 +106,7 @@ public class Battleship {
                 }
             }
         }
-        showBoard();
+        showBoard(board);
 
         System.out.println("Enter the coordinates of the Cruiser (3 cells):");
         while (cruiser == 0) {
@@ -111,7 +117,7 @@ public class Battleship {
                 }
             }
         }
-        showBoard();
+        showBoard(board);
 
         System.out.println("Enter the coordinates of the Destroyer (2 cells):");
         while (destroyer == 0) {
@@ -122,31 +128,34 @@ public class Battleship {
                 }
             }
         }
-        showBoard();
+        showBoard(board);
     }
-    static void createBoard() {
+    static void createBoard(char[][] array) {
         int k = 0;
         for (char j = 'A'; j < 'K'; j++) {
-            board[k][0] = j;
+            array[k][0] = j;
             k++;
         }
 
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 1; j < board[0].length; j++) {
-                board[i][j] = '~';
+        for (int i = 0; i < array.length; i++) {
+            for (int j = 1; j < array[0].length; j++) {
+                array[i][j] = '~';
             }
         }
     }
-    static void showBoard() {
+    static void tafOfWarBoard() {
+        tagOfWar[y1][x1] = board[y1][x1];
+    }
+    static void showBoard(char[][] array) {
 
         int[] rows = new int[11];
         System.out.print("  ");
         for (int i = 1; i < rows.length; i++) {
             System.out.print(i + " ");
         }
-        for (char[] strings : board) {
+        for (char[] strings : array) {
             System.out.println();
-            for (int j = 0; j < board[0].length; j++) {
+            for (int j = 0; j < array[0].length; j++) {
                 System.out.print(strings[j] + " ");
             }
         }
