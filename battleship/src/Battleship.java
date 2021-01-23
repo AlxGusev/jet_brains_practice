@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Battleship {
@@ -6,6 +8,12 @@ public class Battleship {
     static char[][] board = new char[10][11];
     static char[][] tagOfWar = new char[10][11];
     static char[] shot;
+    static List<String> fiveDeckCarrier = new ArrayList<>();
+    static List<String> fourDeckBattleship = new ArrayList<>();
+    static List<String> threeDeckSubmarine = new ArrayList<>();
+    static List<String> threeDeckCruiser = new ArrayList<>();
+    static List<String> twoDeckDestroyer = new ArrayList<>();
+    static int shipsLeft = 5;
     static int carrier = 0;
     static int battleship = 0;
     static int submarine = 0;
@@ -18,30 +26,19 @@ public class Battleship {
 
     public static void main(String[] args) {
         placeShips();
+
         System.out.println("The game starts!");
         showBoard(tagOfWar);
         System.out.println("Take a shot!");
-        int turn = 0;
-        while (turn == 0) {
+
+
+        while (shipsLeft != 0) {
             if (makeShot()) {
-                turn = 1;
+//                gameOn = 1;
                 checkTheShot();
             }
         }
-    }
 
-    static boolean makeShot() {
-        shot = scanner.nextLine().toCharArray();
-        if (!(shot[0] > '@' && shot[0] < 'K')) {
-            System.out.println("Error! You entered the wrong coordinates! Try again:");
-            return false;
-        }
-        if (shot.length > 2) {
-            System.out.println("Error! You entered the wrong coordinates! Try again:");
-            return false;
-        } else {
-            return true;
-        }
     }
 
     static void checkTheShot() {
@@ -58,16 +55,72 @@ public class Battleship {
             tafOfWarBoard();
             showBoard(tagOfWar);
             System.out.println("You hit a ship!");
-            showBoard(board);
         } else {
             board[y1][x1] = 'M';
             tafOfWarBoard();
             showBoard(tagOfWar);
             System.out.println("You missed!");
-            showBoard(board);
         }
     }
 
+
+
+    static boolean coordinates(List<String> ship) {
+
+        if (y1 - y2 == 0) {
+            if (checkHorizontalCoordinates()) {
+                for (int i = x1; i <= x2; i++) {
+                    ship.add(y1 + String.valueOf(i));
+                    board[y1][i] = 'O';
+                }
+            } else {
+                return false;
+            }
+            System.out.println(ship.size());
+            System.out.println(ship);
+            return true;
+        } else if (x1 - x2 == 0) {
+            if (checkVerticalCoordinates()) {
+                for (int i = y1; i <= y2; i++) {
+                    ship.add(String.valueOf(i) + x1);
+                    board[i][x1] = 'O';
+                }
+            } else {
+                return false;
+            }
+            System.out.println(ship);
+            return true;
+        } else {
+            System.out.println("Error! Wrong ship location! Try again:");
+            return false;
+        }
+    }
+    static int conversionCharToInt(char x) {
+        switch (x) {
+            case 'A':
+                return 0;
+            case 'B':
+                return 1;
+            case 'C':
+                return 2;
+            case 'D':
+                return 3;
+            case 'E':
+                return 4;
+            case 'F':
+                return 5;
+            case 'G':
+                return 6;
+            case 'H':
+                return 7;
+            case 'I':
+                return 8;
+            case 'J':
+                return 9;
+            default:
+                throw new IllegalStateException("Unexpected value: " + x);
+        }
+    }
     static void placeShips() {
         createBoard(board);
         createBoard(tagOfWar);
@@ -77,9 +130,10 @@ public class Battleship {
         System.out.println("Enter the coordinates of the Aircraft Carrier (5 cells):");
 
         while (carrier == 0) {
+
             recordCoordinates();
             if (createAirCraftCarrier()) {
-                if (coordinates()) {
+                if (coordinates(fiveDeckCarrier)) {
                     carrier = 1;
                 }
             }
@@ -90,7 +144,7 @@ public class Battleship {
         while (battleship == 0) {
             recordCoordinates();
             if (createBattleship()) {
-                if (coordinates()) {
+                if (coordinates(fourDeckBattleship)) {
                     battleship = 1;
                 }
             }
@@ -101,7 +155,7 @@ public class Battleship {
         while (submarine == 0) {
             recordCoordinates();
             if (createSubmarine()) {
-                if (coordinates()) {
+                if (coordinates(threeDeckSubmarine)) {
                     submarine = 1;
                 }
             }
@@ -112,7 +166,7 @@ public class Battleship {
         while (cruiser == 0) {
             recordCoordinates();
             if (createCruiser()) {
-                if (coordinates()) {
+                if (coordinates(threeDeckCruiser)) {
                     cruiser = 1;
                 }
             }
@@ -123,12 +177,71 @@ public class Battleship {
         while (destroyer == 0) {
             recordCoordinates();
             if (createDestroyer()) {
-                if (coordinates()) {
+                if (coordinates(twoDeckDestroyer)) {
                     destroyer = 1;
                 }
             }
         }
         showBoard(board);
+        System.out.println(fiveDeckCarrier);
+        System.out.println(fourDeckBattleship);
+        System.out.println(threeDeckSubmarine);
+        System.out.println(threeDeckCruiser);
+        System.out.println(twoDeckDestroyer);
+    }
+    static void recordCoordinates() {
+        String[] ship = scanner.nextLine().split(" ");
+
+        for (char[] chars : board) {
+            if (chars[0] == ship[0].charAt(0)) {
+                y1 = conversionCharToInt(ship[0].charAt(0));
+            }
+            if (chars[0] == ship[1].charAt(0)) {
+                y2 = conversionCharToInt(ship[1].charAt(0));
+            }
+        }
+
+        x1 = ship[0].length() <= 2 ? ship[0].charAt(1) - '0' : 10;
+        x2 = ship[1].length() <= 2 ? ship[1].charAt(1) - '0' : 10;
+
+        if (y1 > y2) {
+            int temp = y1;
+            y1 = y2;
+            y2 = temp;
+        }
+        if (x1 > x2) {
+            int temp = x1;
+            x1 = x2;
+            x2 = temp;
+        }
+    }
+    static boolean makeShot() {
+        shot = scanner.nextLine().toCharArray();
+        if (!(shot[0] > '@' && shot[0] < 'K')) {
+            System.out.println("Error! You entered the wrong coordinates! Try again:");
+            return false;
+        }
+        if (shot.length > 2) {
+            if (shot[1] == '1' && shot[2] == '0') {
+                return true;
+            }
+            System.out.println("Error! You entered the wrong coordinates! Try again:");
+            return false;
+        }
+        return true;
+    }
+
+    static void checkHit() {
+        String hit = "34";
+        // проверить выстрел по всем листам, удалить если есть
+        // проверить пустой ли лист, если да установить флаг на TRUE
+        if (fiveDeckCarrier.contains(hit)) {
+            fiveDeckCarrier.remove(hit);
+            if (fiveDeckCarrier.size() == 0) {
+                shipsLeft--;
+                System.out.println("You sank a ship! Specify a new target:");
+            }
+        }
     }
     static void createBoard(char[][] array) {
         int k = 0;
@@ -195,57 +308,6 @@ public class Battleship {
         }
         System.out.println("Error! Wrong length of the Destroyer! Try again:");
         return false;
-    }
-    static void recordCoordinates() {
-        String[] ship = scanner.nextLine().split(" ");
-
-        for (char[] chars : board) {
-            if (chars[0] == ship[0].charAt(0)) {
-                y1 = conversionCharToInt(ship[0].charAt(0));
-            }
-            if (chars[0] == ship[1].charAt(0)) {
-                y2 = conversionCharToInt(ship[1].charAt(0));
-            }
-        }
-
-        x1 = ship[0].length() <= 2 ? ship[0].charAt(1) - '0' : 10;
-        x2 = ship[1].length() <= 2 ? ship[1].charAt(1) - '0' : 10;
-
-        if (y1 > y2) {
-            int temp = y1;
-            y1 = y2;
-            y2 = temp;
-        }
-        if (x1 > x2) {
-            int temp = x1;
-            x1 = x2;
-            x2 = temp;
-        }
-    }
-    static boolean coordinates() {
-
-        if (y1 - y2 == 0) {
-            if (checkHorizontalCoordinates()) {
-                for (int i = x1; i <= x2; i++) {
-                    board[y1][i] = 'O';
-                }
-            } else {
-                return false;
-            }
-            return true;
-        } else if (x1 - x2 == 0) {
-            if (checkVerticalCoordinates()) {
-                for (int i = y1; i <= y2; i++) {
-                    board[i][x1] = 'O';
-                }
-            } else {
-                return false;
-            }
-            return true;
-        } else {
-            System.out.println("Error! Wrong ship location! Try again:");
-            return false;
-        }
     }
     static boolean checkHorizontalCoordinates() {
 
@@ -394,30 +456,5 @@ public class Battleship {
         }
         return true;
     }
-    static int conversionCharToInt(char x) {
-        switch (x) {
-            case 'A':
-                return 0;
-            case 'B':
-                return 1;
-            case 'C':
-                return 2;
-            case 'D':
-                return 3;
-            case 'E':
-                return 4;
-            case 'F':
-                return 5;
-            case 'G':
-                return 6;
-            case 'H':
-                return 7;
-            case 'I':
-                return 8;
-            case 'J':
-                return 9;
-            default:
-                throw new IllegalStateException("Unexpected value: " + x);
-        }
-    }
+
 }
