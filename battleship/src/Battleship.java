@@ -1,9 +1,10 @@
 import java.util.Scanner;
 
 public class Battleship {
+
     static Scanner scanner = new Scanner(System.in);
     static char[][] board = new char[10][11];
-
+    static char[] shot;
     static int carrier = 0;
     static int battleship = 0;
     static int submarine = 0;
@@ -15,12 +16,62 @@ public class Battleship {
     static int x2 = 0;
 
     public static void main(String[] args) {
-        createBoard();
+        placeShips();
+        System.out.println("The game starts!");
         showBoard();
+        System.out.println("Take a shot!");
+        int turn = 0;
+        while (turn == 0) {
+            if (makeShot()) {
+                turn = 1;
+                checkTheShot();
+            }
+        }
+    }
+
+    static boolean makeShot() {
+        shot = scanner.nextLine().toCharArray();
+        if (!(shot[0] > '@' && shot[0] < 'K')) {
+            System.out.println("Error! You entered the wrong coordinates! Try again:");
+            return false;
+        }
+        if (shot.length > 2) {
+            System.out.println("Error! You entered the wrong coordinates! Try again:");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    static void checkTheShot() {
+        for (char[] chars : board) {
+            if (chars[0] == shot[0]) {
+                y1 = conversionCharToInt(shot[0]);
+                break;
+            }
+        }
+        x1 = shot.length <= 2 ? shot[1] - '0' : 10;
+
+        if (board[y1][x1] == 'O') {
+            board[y1][x1] = 'X';
+            showBoard();
+            System.out.println("You hit a ship!");
+        } else {
+            board[y1][x1] = 'M';
+            showBoard();
+            System.out.println("You missed!");
+        }
+    }
+
+    static void placeShips() {
+        createBoard();
+
+        showBoard();
+
         System.out.println("Enter the coordinates of the Aircraft Carrier (5 cells):");
 
         while (carrier == 0) {
-            checkCoordinates();
+            recordCoordinates();
             if (createAirCraftCarrier()) {
                 if (coordinates()) {
                     carrier = 1;
@@ -31,7 +82,7 @@ public class Battleship {
 
         System.out.println("Enter the coordinates of the Battleship (4 cells):");
         while (battleship == 0) {
-            checkCoordinates();
+            recordCoordinates();
             if (createBattleship()) {
                 if (coordinates()) {
                     battleship = 1;
@@ -42,7 +93,7 @@ public class Battleship {
 
         System.out.println("Enter the coordinates of the Submarine (3 cells):");
         while (submarine == 0) {
-            checkCoordinates();
+            recordCoordinates();
             if (createSubmarine()) {
                 if (coordinates()) {
                     submarine = 1;
@@ -53,7 +104,7 @@ public class Battleship {
 
         System.out.println("Enter the coordinates of the Cruiser (3 cells):");
         while (cruiser == 0) {
-            checkCoordinates();
+            recordCoordinates();
             if (createCruiser()) {
                 if (coordinates()) {
                     cruiser = 1;
@@ -64,7 +115,7 @@ public class Battleship {
 
         System.out.println("Enter the coordinates of the Destroyer (2 cells):");
         while (destroyer == 0) {
-            checkCoordinates();
+            recordCoordinates();
             if (createDestroyer()) {
                 if (coordinates()) {
                     destroyer = 1;
@@ -73,7 +124,6 @@ public class Battleship {
         }
         showBoard();
     }
-
     static void createBoard() {
         int k = 0;
         for (char j = 'A'; j < 'K'; j++) {
@@ -87,7 +137,7 @@ public class Battleship {
             }
         }
     }
-    private static void showBoard() {
+    static void showBoard() {
 
         int[] rows = new int[11];
         System.out.print("  ");
@@ -102,7 +152,6 @@ public class Battleship {
         }
         System.out.println();
     }
-
     static boolean createAirCraftCarrier() {
         if (Math.abs(y1 - y2) == 4 || Math.abs(x1 - x2) == 4) {
             return true;
@@ -138,9 +187,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Destroyer! Try again:");
         return false;
     }
-
-
-    static void checkCoordinates() {
+    static void recordCoordinates() {
         String[] ship = scanner.nextLine().split(" ");
 
         for (char[] chars : board) {
@@ -166,7 +213,6 @@ public class Battleship {
             x2 = temp;
         }
     }
-
     static boolean coordinates() {
 
         if (y1 - y2 == 0) {
@@ -192,7 +238,6 @@ public class Battleship {
             return false;
         }
     }
-
     static boolean checkHorizontalCoordinates() {
 
         if (y1 == 0) {
