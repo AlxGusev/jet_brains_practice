@@ -5,17 +5,27 @@ import java.util.Scanner;
 public class Battleship {
 
     static Scanner scanner = new Scanner(System.in);
-    static char[][] board = new char[10][11];
-    static char[][] tagOfWar = new char[10][11];
+    static char[][] boardP1 = new char[10][11];
+    static char[][] boardP2 = new char[10][11];
+    static char[][] tagOfWar1 = new char[10][11];
+    static char[][] tagOfWar2 = new char[10][11];
     static char[] shot;
-    static List<String> fiveDeckCarrier = new ArrayList<>();
-    static List<String> fourDeckBattleship = new ArrayList<>();
-    static List<String> threeDeckSubmarine = new ArrayList<>();
-    static List<String> threeDeckCruiser = new ArrayList<>();
-    static List<String> twoDeckDestroyer = new ArrayList<>();
-    static List<List<String>> fleet = new ArrayList<>();
-    static List<String> madeShots = new ArrayList<>();
-    static int shipsLeft = 5;
+    static List<String> fiveDeckCarrierP1 = new ArrayList<>();
+    static List<String> fourDeckBattleshipP1 = new ArrayList<>();
+    static List<String> threeDeckSubmarineP1 = new ArrayList<>();
+    static List<String> threeDeckCruiserP1 = new ArrayList<>();
+    static List<String> twoDeckDestroyerP1 = new ArrayList<>();
+    static List<String> fiveDeckCarrierP2 = new ArrayList<>();
+    static List<String> fourDeckBattleshipP2 = new ArrayList<>();
+    static List<String> threeDeckSubmarineP2 = new ArrayList<>();
+    static List<String> threeDeckCruiserP2 = new ArrayList<>();
+    static List<String> twoDeckDestroyerP2 = new ArrayList<>();
+    static List<List<String>> fleet1 = new ArrayList<>();
+    static List<List<String>> fleet2 = new ArrayList<>();
+    static List<String> madeShots1 = new ArrayList<>();
+    static List<String> madeShots2 = new ArrayList<>();
+    static int shipsLeftP1 = 5;
+    static int shipsLeftP2 = 5;
     static int carrier = 0;
     static int battleship = 0;
     static int submarine = 0;
@@ -25,24 +35,61 @@ public class Battleship {
     static int x1 = 0;
     static int y2 = 0;
     static int x2 = 0;
+    static int turn = 1;
 
     public static void main(String[] args) {
-        placeShips();
 
-        System.out.println("The game starts!");
-        showBoard(tagOfWar);
-        System.out.println("Take a shot!");
+        System.out.println("Player 1, place your ships on the game field");
+        placeShips(fiveDeckCarrierP1, fourDeckBattleshipP1, threeDeckSubmarineP1, threeDeckCruiserP1, twoDeckDestroyerP1, boardP1, tagOfWar1);
+        turn = 2;
+        System.out.println("Press Enter and pass the move to another player");
+        scanner.nextLine();
+        System.out.println("Player 2, place your ships on the game field");
+        placeShips(fiveDeckCarrierP2, fourDeckBattleshipP2, threeDeckSubmarineP2, threeDeckCruiserP2, twoDeckDestroyerP2, boardP2, tagOfWar2);
+        turn = 1;
 
+        while(shipsLeftP1 != 0 || shipsLeftP2 != 0) {
 
-        while (shipsLeft != 0) {
-            if (makeShot()) {
-                checkTheShot();
+            if (turn == 1) {
+                System.out.println("Press Enter and pass the move to another player");
+                scanner.nextLine();
+                showBoard(tagOfWar2);
+                System.out.println("---------------------");
+                showBoard(boardP1);
+                System.out.println("Player 1, it's your turn:");
+                boolean shorIsCorrect = false;
+                while (!shorIsCorrect) {
+                    shorIsCorrect = makeShot();
+                }
+                checkTheShot(boardP2, tagOfWar2, fleet2, shipsLeftP2, madeShots1);
+                turn = 2;
+            } else {
+                System.out.println("Press Enter and pass the move to another player");
+                scanner.nextLine();
+                showBoard(tagOfWar1);
+                System.out.println("---------------------");
+                showBoard(boardP2);
+                System.out.println("Player 2, it's your turn:");
+                boolean shorIsCorrect = false;
+                while (!shorIsCorrect) {
+                    shorIsCorrect = makeShot();
+                }
+                checkTheShot(boardP1, tagOfWar1, fleet1, shipsLeftP1, madeShots2);
+                turn = 1;
             }
+
         }
+        if (turn == 1) {
+            System.out.println("Player 1 is winner");
+        } else {
+            System.out.println("Player 2 is winner");
+        }
+        System.exit(0);
 
     }
 
-    static void checkTheShot() {
+
+    static void checkTheShot(char[][] board, char[][] tagOfWar, List<List<String>> fleet, int shipsLeft, List<String> madeShots) {
         for (char[] chars : board) {
             if (chars[0] == shot[0]) {
                 y1 = conversionCharToInt(shot[0]);
@@ -52,23 +99,20 @@ public class Battleship {
         x1 = shot.length <= 2 ? shot[1] - '0' : 10;
 
         String hitOrMiss = "";
-        if (!checkDoubleHit(hitOrMiss)) {
+        if (!checkDoubleHit(hitOrMiss, board, madeShots)) {
             if (board[y1][x1] == 'O') {
                 board[y1][x1] = 'X';
             } else {
                 board[y1][x1] = 'M';
             }
-            tafOfWarBoard();
+            tagOfWar[y1][x1] = board[y1][x1];
             hitOrMiss = y1 + "" + x1;
-            showBoard(tagOfWar);
-            checkHit(hitOrMiss);
+            checkHit(hitOrMiss, fleet, shipsLeft);
         } else {
-            showBoard(tagOfWar);
-            System.out.println("You hit a ship! Try again:");
+            System.out.println("You hit a ship!");
         }
     }
-
-    static boolean checkDoubleHit(String hitOrMiss) {
+    static boolean checkDoubleHit(String hitOrMiss, char[][] board, List<String> madeShots) {
 
         if (madeShots.contains(hitOrMiss) && board[y1][x1] == 'X') {
             return true;
@@ -77,24 +121,31 @@ public class Battleship {
             return false;
         }
     }
-
-    static void checkHit(String hitOrMiss) {
+    static void checkHit(String hitOrMiss, List<List<String>> fleet, int shipsLeft) {
         int misses = 0;
         for (List<String> ship : fleet) {
             if (ship.contains(hitOrMiss)) {
                 if (shipsLeft == 1 && ship.size() == 1) {
                     ship.remove(hitOrMiss);
-                    shipsLeft--;
+                    if (turn == 1) {
+                        shipsLeftP2--;
+                    } else {
+                        shipsLeftP1--;
+                    }
                     System.out.println("You sank the last ship. You won. Congratulations!");
                     break;
                 } else if (ship.size() == 1) {
                     ship.remove(hitOrMiss);
-                    shipsLeft--;
-                    System.out.println("You sank a ship! Specify a new target:");
+                    if (turn == 1) {
+                        shipsLeftP2--;
+                    } else {
+                        shipsLeftP1--;
+                    }
+                    System.out.println("You sank a ship!");
                     break;
                 } else {
                     ship.remove(hitOrMiss);
-                    System.out.println("You hit a ship! Try again:");
+                    System.out.println("You hit a ship!");
                     break;
                 }
             } else {
@@ -102,11 +153,9 @@ public class Battleship {
             }
         }
         if (misses == 5) {
-            System.out.println("You missed. Try again:");
+            System.out.println("You missed!");
         }
     }
-
-
     static boolean makeShot() {
         shot = scanner.nextLine().toCharArray();
         if (!(shot[0] > '@' && shot[0] < 'K')) {
@@ -122,12 +171,10 @@ public class Battleship {
         }
         return true;
     }
-
-
-    static boolean coordinates(List<String> ship) {
+    static boolean coordinates(List<String> ship, char[][] board) {
 
         if (y1 - y2 == 0) {
-            if (checkHorizontalCoordinates()) {
+            if (checkHorizontalCoordinates(board)) {
                 for (int i = x1; i <= x2; i++) {
                     ship.add(y1 + "" + i);
                     board[y1][i] = 'O';
@@ -137,7 +184,7 @@ public class Battleship {
             }
             return true;
         } else if (x1 - x2 == 0) {
-            if (checkVerticalCoordinates()) {
+            if (checkVerticalCoordinates(board)) {
                 for (int i = y1; i <= y2; i++) {
                     ship.add(i + "" + x1);
                     board[i][x1] = 'O';
@@ -151,80 +198,93 @@ public class Battleship {
             return false;
         }
     }
-    static void placeShips() {
+    static void placeShips(List<String> ship1, List<String> ship2, List<String> ship3, List<String> ship4, List<String> ship5, char[][] board, char[][] tagOfWar) {
+
         createBoard(board);
         createBoard(tagOfWar);
 
         showBoard(board);
 
         System.out.println("Enter the coordinates of the Aircraft Carrier (5 cells):");
-
         while (carrier == 0) {
-
-            recordCoordinates();
+            recordCoordinates(board);
             if (createAirCraftCarrier()) {
-                if (coordinates(fiveDeckCarrier)) {
+                if (coordinates(ship1, board)) {
                     carrier = 1;
                 }
             }
         }
+        carrier = 0;
         showBoard(board);
 
         System.out.println("Enter the coordinates of the Battleship (4 cells):");
         while (battleship == 0) {
-            recordCoordinates();
+            recordCoordinates(board);
             if (createBattleship()) {
-                if (coordinates(fourDeckBattleship)) {
+                if (coordinates(ship2, board)) {
                     battleship = 1;
                 }
             }
         }
+        battleship = 0;
         showBoard(board);
 
         System.out.println("Enter the coordinates of the Submarine (3 cells):");
         while (submarine == 0) {
-            recordCoordinates();
+            recordCoordinates(board);
             if (createSubmarine()) {
-                if (coordinates(threeDeckSubmarine)) {
+                if (coordinates(ship3, board)) {
                     submarine = 1;
                 }
             }
         }
+        submarine = 0;
         showBoard(board);
 
         System.out.println("Enter the coordinates of the Cruiser (3 cells):");
         while (cruiser == 0) {
-            recordCoordinates();
+            recordCoordinates(board);
             if (createCruiser()) {
-                if (coordinates(threeDeckCruiser)) {
+                if (coordinates(ship4, board)) {
                     cruiser = 1;
                 }
             }
         }
+        cruiser = 0;
         showBoard(board);
 
         System.out.println("Enter the coordinates of the Destroyer (2 cells):");
         while (destroyer == 0) {
-            recordCoordinates();
+            recordCoordinates(board);
             if (createDestroyer()) {
-                if (coordinates(twoDeckDestroyer)) {
+                if (coordinates(ship5, board)) {
                     destroyer = 1;
                 }
             }
         }
+        destroyer = 0;
 
-        fleet.add(fiveDeckCarrier);
-        fleet.add(fourDeckBattleship);
-        fleet.add(threeDeckSubmarine);
-        fleet.add(threeDeckCruiser);
-        fleet.add(twoDeckDestroyer);
+        if (turn == 1) {
+            fleet1.add(ship1);
+            fleet1.add(ship2);
+            fleet1.add(ship3);
+            fleet1.add(ship4);
+            fleet1.add(ship5);
+        } else {
+            fleet2.add(ship1);
+            fleet2.add(ship2);
+            fleet2.add(ship3);
+            fleet2.add(ship4);
+            fleet2.add(ship5);
+        }
+
         showBoard(board);
 
     }
-    static void recordCoordinates() {
+    static void recordCoordinates(char[][] arr) {
         String[] ship = scanner.nextLine().split(" ");
 
-        for (char[] chars : board) {
+        for (char[] chars : arr) {
             if (chars[0] == ship[0].charAt(0)) {
                 y1 = conversionCharToInt(ship[0].charAt(0));
             }
@@ -249,9 +309,10 @@ public class Battleship {
     }
     static void createBoard(char[][] array) {
         int k = 0;
-        for (char j = 'A'; j < 'K'; j++) {
+        for (char j = 'A'; j <= 'J'; j++) {
             array[k][0] = j;
             k++;
+
         }
 
         for (int i = 0; i < array.length; i++) {
@@ -259,9 +320,6 @@ public class Battleship {
                 array[i][j] = '~';
             }
         }
-    }
-    static void tafOfWarBoard() {
-        tagOfWar[y1][x1] = board[y1][x1];
     }
     static void showBoard(char[][] array) {
 
@@ -313,7 +371,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Destroyer! Try again:");
         return false;
     }
-    static boolean checkHorizontalCoordinates() {
+    static boolean checkHorizontalCoordinates(char[][] board) {
 
         if (y1 == 0) {
             if (x1 == 1) {
@@ -387,7 +445,7 @@ public class Battleship {
         }
         return true;
     }
-    static boolean checkVerticalCoordinates() {
+    static boolean checkVerticalCoordinates(char[][] board) {
         if (x1 == 1) {
             if (y1 == 0) {
                 for (int i = y1; i <= y2 + 1; i++) {
