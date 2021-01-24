@@ -36,6 +36,7 @@ public class Battleship {
     static int y2 = 0;
     static int x2 = 0;
     static int turn = 1;
+    static boolean game = false;
 
     public static void main(String[] args) {
 
@@ -48,7 +49,7 @@ public class Battleship {
         placeShips(fiveDeckCarrierP2, fourDeckBattleshipP2, threeDeckSubmarineP2, threeDeckCruiserP2, twoDeckDestroyerP2, boardP2, tagOfWar2);
         turn = 1;
 
-        while(shipsLeftP1 != 0 || shipsLeftP2 != 0) {
+        while(!game) {
 
             if (turn == 1) {
                 System.out.println("Press Enter and pass the move to another player");
@@ -133,6 +134,7 @@ public class Battleship {
                         shipsLeftP1--;
                     }
                     System.out.println("You sank the last ship. You won. Congratulations!");
+                    game = true;
                     break;
                 } else if (ship.size() == 1) {
                     ship.remove(hitOrMiss);
