@@ -78,7 +78,6 @@ public class Battleship {
                 checkTheShot(boardP1, tagOfWar1, fleet1, shipsLeftP1, madeShots2);
                 turn = 1;
             }
-
         }
         if (turn == 1) {
             System.out.println("Player 1 is winner");
@@ -88,7 +87,6 @@ public class Battleship {
         System.exit(0);
 
     }
-
 
     static void checkTheShot(char[][] board, char[][] tagOfWar, List<List<String>> fleet, int shipsLeft, List<String> madeShots) {
         for (char[] chars : board) {
@@ -113,6 +111,7 @@ public class Battleship {
             System.out.println("You hit a ship!");
         }
     }
+
     static boolean checkDoubleHit(String hitOrMiss, char[][] board, List<String> madeShots) {
 
         if (madeShots.contains(hitOrMiss) && board[y1][x1] == 'X') {
@@ -122,6 +121,7 @@ public class Battleship {
             return false;
         }
     }
+
     static void checkHit(String hitOrMiss, List<List<String>> fleet, int shipsLeft) {
         int misses = 0;
         for (List<String> ship : fleet) {
@@ -158,6 +158,7 @@ public class Battleship {
             System.out.println("You missed!");
         }
     }
+
     static boolean makeShot() {
         shot = scanner.nextLine().toCharArray();
         if (!(shot[0] > '@' && shot[0] < 'K')) {
@@ -173,6 +174,7 @@ public class Battleship {
         }
         return true;
     }
+
     static boolean coordinates(List<String> ship, char[][] board) {
 
         if (y1 - y2 == 0) {
@@ -200,6 +202,7 @@ public class Battleship {
             return false;
         }
     }
+
     static void placeShips(List<String> ship1, List<String> ship2, List<String> ship3, List<String> ship4, List<String> ship5, char[][] board, char[][] tagOfWar) {
 
         createBoard(board);
@@ -283,6 +286,7 @@ public class Battleship {
         showBoard(board);
 
     }
+
     static void recordCoordinates(char[][] arr) {
         String[] ship = scanner.nextLine().split(" ");
 
@@ -309,6 +313,7 @@ public class Battleship {
             x2 = temp;
         }
     }
+
     static void createBoard(char[][] array) {
         int k = 0;
         for (char j = 'A'; j <= 'J'; j++) {
@@ -323,6 +328,7 @@ public class Battleship {
             }
         }
     }
+
     static void showBoard(char[][] array) {
 
         int[] rows = new int[11];
@@ -338,6 +344,7 @@ public class Battleship {
         }
         System.out.println();
     }
+
     static boolean createAirCraftCarrier() {
         if (Math.abs(y1 - y2) == 4 || Math.abs(x1 - x2) == 4) {
             return true;
@@ -345,6 +352,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Aircraft Carrier! Try again:");
         return false;
     }
+
     static boolean createBattleship() {
         if (Math.abs(x1 - x2) == 3 || Math.abs(y1 - y2) == 3) {
             return true;
@@ -352,6 +360,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Submarine! Try again:");
         return false;
     }
+
     static boolean createSubmarine() {
         if (Math.abs(x1 - x2) == 2 || Math.abs(y1 - y2) == 2) {
             return true;
@@ -359,6 +368,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Submarine! Try again:");
         return false;
     }
+
     static boolean createCruiser() {
         if (Math.abs(x1 - x2) == 2 || Math.abs(y1 - y2) == 2) {
             return true;
@@ -366,6 +376,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Cruiser! Try again:");
         return false;
     }
+
     static boolean createDestroyer() {
         if (Math.abs(x1 - x2) == 1 || Math.abs(y1 - y2) == 1) {
             return true;
@@ -373,6 +384,7 @@ public class Battleship {
         System.out.println("Error! Wrong length of the Destroyer! Try again:");
         return false;
     }
+
     static boolean checkHorizontalCoordinates(char[][] board) {
 
         if (y1 == 0) {
@@ -447,6 +459,7 @@ public class Battleship {
         }
         return true;
     }
+
     static boolean checkVerticalCoordinates(char[][] board) {
         if (x1 == 1) {
             if (y1 == 0) {
@@ -520,6 +533,7 @@ public class Battleship {
         }
         return true;
     }
+
     static int conversionCharToInt(char x) {
         switch (x) {
             case 'A':
