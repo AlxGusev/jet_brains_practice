@@ -75,7 +75,7 @@ public class NumericMatrix {
         double[][] matrix = createOneMatrix();
 
         for (int i = 0; i < matrix.length; i++) {
-            for (int j = i; j < matrix.length; j++) {
+            for (int j = i + 1; j < matrix.length; j++) {
                 double temp = matrix[i][j];
                 matrix[i][j] = matrix[j][i];
                 matrix[j][i] = temp;
@@ -88,7 +88,7 @@ public class NumericMatrix {
 
         double[][] matrix = createOneMatrix();
         for (int i = 0; i < matrix.length - 1; i++) { //2
-            for (int j = matrix.length - 1 - i; j >= 0; j--) {
+            for (int j = matrix.length - 2 - i; j >= 0; j--) {
                 double temp = matrix[i][j];
                 matrix[i][j] = matrix[matrix.length - 1 - j][matrix.length - 1 - i];
                 matrix[matrix.length - 1 - j][matrix.length - 1 - i] = temp;
