@@ -17,6 +17,7 @@ public class NumericMatrix {
             System.out.println("1. Add matrices");
             System.out.println("2. Multiply matrix by a constant");
             System.out.println("3. Multiply matrices");
+            System.out.println("4. Transpose matrix");
             System.out.println("0. Exit");
             System.out.print("Your choice: ");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -26,6 +27,7 @@ public class NumericMatrix {
     }
 
     static void showMenu(int choice) {
+
         switch (choice) {
             case 1:
                 addMatrices();
@@ -33,7 +35,11 @@ public class NumericMatrix {
             case 2:
                 multiplyMatrixByConst();
                 break;
-            case 3:multiplyMatrices();
+            case 3:
+                multiplyMatrices();
+                break;
+            case 4:
+                showMenuNumberFour();
                 break;
             case 0:
                 exit = 1;
@@ -41,9 +47,59 @@ public class NumericMatrix {
         }
     }
 
+    static void showMenuNumberFour() {
+
+        System.out.println("1. Main diagonal");
+        System.out.println("2. Side diagonal");
+        System.out.println("3. Vertical line");
+        System.out.println("4. Horizontal line");
+        System.out.print("Your choice: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        switch (choice) {
+            case 1:
+                transposeByMainDiagonal();
+                break;
+            case 2:
+                transposeBySideDiagonal();
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
+    }
+
+    static void transposeByMainDiagonal() {
+
+        double[][] matrix = createOneMatrix();
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = i; j < matrix.length; j++) {
+                double temp = matrix[i][j];
+                matrix[i][j] = matrix[j][i];
+                matrix[j][i] = temp;
+            }
+        }
+        printCalculatedMatrix(matrix);
+    }
+
+    static void transposeBySideDiagonal() {
+
+        double[][] matrix = createOneMatrix();
+        for (int i = 0; i < matrix.length - 1; i++) { //2
+            for (int j = matrix.length - 1 - i; j >= 0; j--) {
+                double temp = matrix[i][j];
+                matrix[i][j] = matrix[matrix.length - 1 - j][matrix.length - 1 - i];
+                matrix[matrix.length - 1 - j][matrix.length - 1 - i] = temp;
+            }
+        }
+        printCalculatedMatrix(matrix);
+    }
+
     static void addMatrices() {
 
-        createTwoMatrix();
+        createTwoMatrices();
 
         if (rowMatrix1 != rowMatrix2 && columnMatrix1 != columnMatrix2) {
             System.out.println("The operation cannot be performed.");
@@ -61,7 +117,7 @@ public class NumericMatrix {
 
     static void multiplyMatrices() {
 
-        createTwoMatrix();
+        createTwoMatrices();
 
         if (columnMatrix1 != rowMatrix2) {
             System.out.println("The operation cannot be performed.");
@@ -77,19 +133,12 @@ public class NumericMatrix {
                 matrix[i][j] = num;
             }
         }
-
         printCalculatedMatrix(matrix);
     }
 
     static void multiplyMatrixByConst() {
 
-        System.out.print("Enter size of matrix: ");
-        String[] matrixDimension = scanner.nextLine().split(" ");
-        rowMatrix1 = Integer.parseInt(matrixDimension[0]);
-        columnMatrix1 = Integer.parseInt(matrixDimension[1]);
-
-        System.out.println("Enter matrix: ");
-        double[][] matrix = fillUpMatrixFromInput(rowMatrix1, columnMatrix1);
+        double[][] matrix = createOneMatrix();
 
         System.out.print("Enter constant: ");
         double constanta = Double.parseDouble(scanner.nextLine());
@@ -120,6 +169,7 @@ public class NumericMatrix {
     }
 
     static void printCalculatedMatrix(double[][] matrix) {
+
         System.out.print("The result is:");
         for (double[] ints : matrix) {
             System.out.println();
@@ -130,7 +180,7 @@ public class NumericMatrix {
         System.out.println();
     }
 
-    static void createTwoMatrix() {
+    static void createTwoMatrices() {
 
         System.out.print("Enter size of first matrix: ");
         String[] sizeMatrix1 = scanner.nextLine().split(" ");
@@ -147,5 +197,14 @@ public class NumericMatrix {
 
         System.out.println("Enter second matrix: ");
         matrix2 = fillUpMatrixFromInput(rowMatrix2, columnMatrix2);
+    }
+
+    static double[][] createOneMatrix() {
+
+        System.out.print("Enter size of matrix: ");
+        String[] matrixDimension = scanner.nextLine().split(" ");
+        System.out.println("Enter matrix: ");
+
+        return fillUpMatrixFromInput(Integer.parseInt(matrixDimension[0]), Integer.parseInt(matrixDimension[1]));
     }
 }
