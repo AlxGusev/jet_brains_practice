@@ -64,10 +64,40 @@ public class NumericMatrix {
                 transposeBySideDiagonal();
                 break;
             case 3:
+                transposeByVerticalLine();
                 break;
             case 4:
+                transposeByHorizontalLine();
                 break;
         }
+    }
+
+    static void transposeByHorizontalLine() {
+        
+        double[][] matrix = createOneMatrix();
+
+        for (int i = 0; i < matrix.length / 2; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                double temp = matrix[i][j];
+                matrix[i][j] = matrix[matrix.length - 1 - i][j];
+                matrix[matrix.length - 1 - i][j] = temp;
+            }
+        }
+        printCalculatedMatrix(matrix);
+    }
+
+    static void transposeByVerticalLine() {
+        
+        double[][] matrix = createOneMatrix();
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length / 2; j++) {
+                double temp = matrix[i][j];
+                matrix[i][j] = matrix[i][matrix.length - 1 - j];
+                matrix[i][matrix.length - 1 - j] = temp;
+            }
+        }
+        printCalculatedMatrix(matrix);
     }
 
     static void transposeByMainDiagonal() {
@@ -87,7 +117,7 @@ public class NumericMatrix {
     static void transposeBySideDiagonal() {
 
         double[][] matrix = createOneMatrix();
-        for (int i = 0; i < matrix.length - 1; i++) { //2
+        for (int i = 0; i < matrix.length - 1; i++) {
             for (int j = matrix.length - 2 - i; j >= 0; j--) {
                 double temp = matrix[i][j];
                 matrix[i][j] = matrix[matrix.length - 1 - j][matrix.length - 1 - i];
