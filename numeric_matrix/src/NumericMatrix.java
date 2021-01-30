@@ -1,8 +1,10 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class NumericMatrix {
     static Scanner scanner = new Scanner(System.in);
+    static double[][] matrix;
+    static int row;
+    static int column;
     static double[][] matrix1;
     static double[][] matrix2;
     static int rowMatrix1;
@@ -18,6 +20,7 @@ public class NumericMatrix {
             System.out.println("2. Multiply matrix by a constant");
             System.out.println("3. Multiply matrices");
             System.out.println("4. Transpose matrix");
+            System.out.println("5. Calculate a determinant");
             System.out.println("0. Exit");
             System.out.print("Your choice: ");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -40,6 +43,9 @@ public class NumericMatrix {
                 break;
             case 4:
                 showMenuNumberFour();
+                break;
+            case 5:
+                determinant();
                 break;
             case 0:
                 exit = 1;
@@ -72,15 +78,54 @@ public class NumericMatrix {
         }
     }
 
+    static void determinant() {
+        matrix = createOneMatrix();
+        System.out.println(calculateDeterminant(matrix));
+    }
+
+
+    static double calculateDeterminant(double[][] matrix) {
+
+        double determinant = 0;
+
+        if (matrix.length == 1) {
+            determinant = matrix[0][0];
+            return determinant;
+        }
+
+        if (matrix.length == 2) {
+            determinant = ((matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0]));
+            return determinant;
+        }
+
+        for (int i = 0; i < matrix[0].length; i++) {
+
+            double[][] temporary = new double[matrix.length - 1][matrix[0].length - 1];
+
+            for (int j = 1; j < matrix.length; j++) {
+                for (int k = 0; k < matrix[0].length; k++) {
+                    if (k < i) {
+                        temporary[j - 1][k] = matrix[j][k];
+                    } else if (k > i) {
+                        temporary[j - 1][k - 1] = matrix[j][k];
+                    }
+                }
+            }
+
+            determinant += matrix[0][i] * Math.pow(-1, i) * calculateDeterminant(temporary);
+        }
+        return determinant;
+    }
+
     static void transposeByHorizontalLine() {
         
-        double[][] matrix = createOneMatrix();
+        matrix = createOneMatrix();
 
-        for (int i = 0; i < matrix.length / 2; i++) {
-            for (int j = 0; j < matrix[0].length; j++) {
+        for (int i = 0; i < row / 2; i++) {
+            for (int j = 0; j < column; j++) {
                 double temp = matrix[i][j];
-                matrix[i][j] = matrix[matrix.length - 1 - i][j];
-                matrix[matrix.length - 1 - i][j] = temp;
+                matrix[i][j] = matrix[row - 1 - i][j];
+                matrix[row - 1 - i][j] = temp;
             }
         }
         printCalculatedMatrix(matrix);
@@ -88,13 +133,13 @@ public class NumericMatrix {
 
     static void transposeByVerticalLine() {
         
-        double[][] matrix = createOneMatrix();
+        matrix = createOneMatrix();
 
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[0].length / 2; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column / 2; j++) {
                 double temp = matrix[i][j];
-                matrix[i][j] = matrix[i][matrix.length - 1 - j];
-                matrix[i][matrix.length - 1 - j] = temp;
+                matrix[i][j] = matrix[i][row - 1 - j];
+                matrix[i][row - 1 - j] = temp;
             }
         }
         printCalculatedMatrix(matrix);
@@ -102,10 +147,10 @@ public class NumericMatrix {
 
     static void transposeByMainDiagonal() {
 
-        double[][] matrix = createOneMatrix();
+        matrix = createOneMatrix();
 
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = i + 1; j < matrix.length; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = i + 1; j < row; j++) {
                 double temp = matrix[i][j];
                 matrix[i][j] = matrix[j][i];
                 matrix[j][i] = temp;
@@ -116,12 +161,12 @@ public class NumericMatrix {
 
     static void transposeBySideDiagonal() {
 
-        double[][] matrix = createOneMatrix();
-        for (int i = 0; i < matrix.length - 1; i++) {
-            for (int j = matrix.length - 2 - i; j >= 0; j--) {
+        matrix = createOneMatrix();
+        for (int i = 0; i < row - 1; i++) {
+            for (int j = row - 2 - i; j >= 0; j--) {
                 double temp = matrix[i][j];
-                matrix[i][j] = matrix[matrix.length - 1 - j][matrix.length - 1 - i];
-                matrix[matrix.length - 1 - j][matrix.length - 1 - i] = temp;
+                matrix[i][j] = matrix[row - 1 - j][row - 1 - i];
+                matrix[row - 1 - j][row - 1 - i] = temp;
             }
         }
         printCalculatedMatrix(matrix);
@@ -168,18 +213,17 @@ public class NumericMatrix {
 
     static void multiplyMatrixByConst() {
 
-        double[][] matrix = createOneMatrix();
+        matrix = createOneMatrix();
 
         System.out.print("Enter constant: ");
         double constanta = Double.parseDouble(scanner.nextLine());
 
-        double[][] newMatrix = new double[matrix.length][matrix[0].length];
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                newMatrix[i][j] = matrix[i][j] * constanta;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < column; j++) {
+                matrix[i][j] = matrix[i][j] * constanta;
             }
         }
-        printCalculatedMatrix(newMatrix);
+        printCalculatedMatrix(matrix);
     }
 
     static double[][] fillUpMatrixFromInput(int row, int column) {
@@ -234,6 +278,8 @@ public class NumericMatrix {
         System.out.print("Enter size of matrix: ");
         String[] matrixDimension = scanner.nextLine().split(" ");
         System.out.println("Enter matrix: ");
+        row = Integer.parseInt(matrixDimension[0]);
+        column = Integer.parseInt(matrixDimension[1]);
 
         return fillUpMatrixFromInput(Integer.parseInt(matrixDimension[0]), Integer.parseInt(matrixDimension[1]));
     }
