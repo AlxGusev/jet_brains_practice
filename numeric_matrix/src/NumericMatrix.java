@@ -190,7 +190,6 @@ public class NumericMatrix {
         }
     }
 
-
     static void determinant() {
         matrix = createOneMatrix();
         System.out.println(calculateDeterminant(matrix));
