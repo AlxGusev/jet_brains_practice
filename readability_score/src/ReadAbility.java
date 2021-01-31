@@ -15,68 +15,29 @@ public class ReadAbility {
 
             while (scanner.hasNext()) {
 
-                String[] sentence = scanner.nextLine().replaceAll("\\s+", " ").split("[!.?] ");
-                sentences += sentence.length;
-                characters += sentences - 1;
+                String line = scanner.nextLine();
 
-                for (String a : sentence) {
-                    String[] b = a.split(" ");
-                    words += b.length;
+                characters += line.replaceAll(" ", "").length();
+                words += line.split(" ").length;
+                sentences += line.split("[.!?]").length;
 
-                    for (String c : b) {
-                        characters += c.length();
-                    }
-                }
             }
 
             double score = 4.71 * (characters / (double) words) + 0.5 * (words / (double) sentences) - 21.43;
 
+            String[] age = {"5-6", "6-7", "7-9", "9-10", "10-11", "11-12", "12-13", "13-14", "14-15", "15-16", "16-17", "17-18", "18-24", "24+"};
+
             BigDecimal bd = BigDecimal.valueOf(score);
             bd = bd.setScale(2, RoundingMode.FLOOR);
 
-            System.out.printf("Words: %s\n", words);
-            System.out.printf("Sentences: %s\n", sentences);
-            System.out.printf("Characters: %s\n", characters);
-            System.out.printf("The score is: %.2f\n", bd);
-            System.out.printf("This text should be understood by %s-year-olds.", getGradeLevel((int)Math.ceil(score)));
+            System.out.println("Words: " + words);
+            System.out.println("Sentences: " + sentences);
+            System.out.println("Characters: " + characters);
+            System.out.println("The score is: " + bd);
+            System.out.printf("This text should be understood by %s-year-olds.", age[(int)Math.ceil(score)]);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-    static String getGradeLevel(int score) {
-        switch (score) {
-            case 1:
-                return "5-6";
-            case 2:
-                return "6-7";
-            case 3:
-                return "7-9";
-            case 4:
-                return "9-10";
-            case 5:
-                return "10-11";
-            case 6:
-                return "11-12";
-            case 7:
-                return "12-13";
-            case 8:
-                return "13-14";
-            case 9:
-                return "14-15";
-            case 10:
-                return "15-16";
-            case 11:
-                return "16-17";
-            case 12:
-                return "17-18";
-            case 13:
-                return "18-24";
-            case 14:
-                return "24+";
-            default:
-                return "";
         }
     }
 }
