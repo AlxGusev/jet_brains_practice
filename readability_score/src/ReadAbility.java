@@ -34,7 +34,7 @@ public class ReadAbility {
             System.out.println("Sentences: " + sentences);
             System.out.println("Characters: " + characters);
             System.out.println("The score is: " + bd);
-            System.out.printf("This text should be understood by %s-year-olds.", age[(int)Math.ceil(score)]);
+            System.out.printf("This text should be understood by %s-year-olds.", age[(int)Math.ceil(score) - 1]);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
