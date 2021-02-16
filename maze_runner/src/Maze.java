@@ -127,7 +127,6 @@ public class Maze {
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("The file " + fileName + " does not exist");
         }
-
         return newBoard;
     }
 
@@ -154,8 +153,6 @@ public class Maze {
 }
 
 
-
-
 class Board implements Serializable {
 
     int height;
@@ -165,11 +162,11 @@ class Board implements Serializable {
     List<Edge> notVisited;
     Random random = new Random();
     String[][] maze;
-    int[][] direction  = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    int[][] direction = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
     String[][] mazeWithPath;
 
 
-    Board (int height, int width) {
+    Board(int height, int width) {
         this.height = height;
         this.width = width;
         notVisited = new ArrayList<>();
@@ -222,7 +219,7 @@ class Board implements Serializable {
             }
 
             current.SetIsExplore();
-            for (int[] direction: direction) {
+            for (int[] direction : direction) {
                 if (current.getX() + direction[0] == 0 ||
                         current.getY() + direction[1] == 0 ||
                         current.getX() + direction[0] > vertices.length - 1 ||
@@ -252,15 +249,14 @@ class Board implements Serializable {
             iter = iter.getParent();
         }
 
-        for (Cell cell: path) {
+        for (Cell cell : path) {
             mazeWithPath[cell.getX()][cell.getY()] = "//";
         }
-
     }
 
     public Cell findEntryCell() {
         mazeWithPath = Arrays.stream(maze).map(String[]::clone).toArray(String[][]::new);
-        Cell start = new Cell(0,0);
+        Cell start = new Cell(0, 0);
         for (Cell[] vertex : vertices) {
             if (vertex[0].visited) {
                 start = vertex[1];
@@ -272,8 +268,8 @@ class Board implements Serializable {
     }
 
     public boolean findExitCell(Cell cell) {
-        Cell exit = new Cell(0,0);
-        for (Cell[] vertex: vertices) {
+        Cell exit = new Cell(0, 0);
+        for (Cell[] vertex : vertices) {
             if (vertex[vertex.length - 1].visited) {
                 exit = vertex[vertex.length - 2];
                 mazeWithPath[exit.getX()][exit.getY() + 1] = "//";
@@ -306,9 +302,7 @@ class Board implements Serializable {
                 break;
             }
         }
-
         enterAndExit();
-
     }
 
     public boolean checkNeighbours(int x, int y) {
@@ -349,7 +343,6 @@ class Board implements Serializable {
         notVisited.remove(edgeWithMinValue);
 
         return edgeWithMinValue;
-
     }
 
     public void findAllIncidentsOfVertex(Cell cell) {
@@ -379,6 +372,7 @@ class Board implements Serializable {
         printMaze(maze);
 
     }
+
     public void printMazeWithExit() {
         printMaze(mazeWithPath);
     }
@@ -394,7 +388,6 @@ class Board implements Serializable {
         System.out.println();
         System.out.println();
     }
-
 
 
     public void enterAndExit() {
