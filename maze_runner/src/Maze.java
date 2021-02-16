@@ -1,10 +1,8 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Maze {
+
     public static void main(String[] args) {
 
         menu();
@@ -34,12 +32,11 @@ public class Maze {
                 int pick = Integer.parseInt(scanner.nextLine());
 
                 switch (pick) {
-
                     case 1:
                         System.out.println("Enter the size of a new maze");
                         int size = Integer.parseInt(scanner.nextLine());
                         board = new Board(size, size);
-                        board.printMaze();
+                        board.printMazeWithOutPath();
                         break;
                     case 2:
                         fileName = scanner.nextLine();
@@ -56,6 +53,7 @@ public class Maze {
 
                 System.out.println("3. Save the maze");
                 System.out.println("4. Display the maze");
+                System.out.println("5. Find the escape");
                 System.out.println("0. Exit");
 
                 int pick = Integer.parseInt(scanner.nextLine());
@@ -78,7 +76,13 @@ public class Maze {
                         saveMaze(board, fileName);
                         break;
                     case 4:
-                        board.printMaze();
+                        board.printMazeWithOutPath();
+                        break;
+                    case 5:
+                        if (board.mazeWithPath == null) {
+                            board.findExit();
+                        }
+                        board.printMazeWithExit();
                         break;
                     case 0:
                         exit = true;
@@ -106,12 +110,19 @@ public class Maze {
 
     public static Board loadMaze(String fileName) {
 
+        File file = new File(fileName);
+
         Board newBoard = null;
 
-        try (FileInputStream fis = new FileInputStream(fileName);
+        try (FileInputStream fis = new FileInputStream(file);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
 
             newBoard = (Board) ois.readObject();
+
+            if (checkBoardFormat(newBoard)) {
+                return newBoard;
+            }
+            newBoard = null;
 
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("The file " + fileName + " does not exist");
@@ -120,7 +131,29 @@ public class Maze {
         return newBoard;
     }
 
+    public static boolean checkBoardFormat(Board board) {
+
+        int count = 0;
+
+        for (int i = 0; i < board.maze.length; i++) {
+            if (board.maze[i][0].equals("  ")) {
+                count++;
+            }
+            if (board.maze[i][board.maze[0].length - 1].equals("  ")) {
+                count++;
+            }
+            if (board.maze[0][i].equals("  ")) {
+                count++;
+            }
+            if (board.maze[board.maze.length - 1][i].equals("  ")) {
+                count++;
+            }
+        }
+        return count == 2;
+    }
 }
+
+
 
 
 class Board implements Serializable {
@@ -132,6 +165,9 @@ class Board implements Serializable {
     List<Edge> notVisited;
     Random random = new Random();
     String[][] maze;
+    int[][] direction  = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+    String[][] mazeWithPath;
+
 
     Board (int height, int width) {
         this.height = height;
@@ -162,6 +198,89 @@ class Board implements Serializable {
                 }
             }
         }
+    }
+
+    public void findExit() {
+
+        LinkedList<Cell> nextToVisit = new LinkedList<>();
+
+        Cell start = findEntryCell();
+
+        nextToVisit.add(start);
+
+        while (!nextToVisit.isEmpty()) {
+
+            Cell current = nextToVisit.remove();
+
+            if (!vertices[current.getX()][current.getY()].visited || vertices[current.getX()][current.getY()].isExplore) {
+                continue;
+            }
+
+            if (findExitCell(current)) {
+                backTrack(current);
+                break;
+            }
+
+            current.SetIsExplore();
+            for (int[] direction: direction) {
+                if (current.getX() + direction[0] == 0 ||
+                        current.getY() + direction[1] == 0 ||
+                        current.getX() + direction[0] > vertices.length - 1 ||
+                        current.getY() + direction[1] > vertices.length - 1) {
+                    continue;
+                }
+
+                Cell nextCell = vertices[current.getX() + direction[0]][current.getY() + direction[1]];
+
+                if (nextCell.isExplore || !nextCell.visited) {
+                    continue;
+                }
+
+                nextCell.setParent(current);
+                nextToVisit.add(nextCell);
+            }
+        }
+    }
+
+    public void backTrack(Cell exit) {
+
+        List<Cell> path = new ArrayList<>();
+        Cell iter = exit;
+
+        while (iter != null) {
+            path.add(iter);
+            iter = iter.getParent();
+        }
+
+        for (Cell cell: path) {
+            mazeWithPath[cell.getX()][cell.getY()] = "//";
+        }
+
+    }
+
+    public Cell findEntryCell() {
+        mazeWithPath = Arrays.stream(maze).map(String[]::clone).toArray(String[][]::new);
+        Cell start = new Cell(0,0);
+        for (Cell[] vertex : vertices) {
+            if (vertex[0].visited) {
+                start = vertex[1];
+                mazeWithPath[start.getX()][0] = "//";
+                break;
+            }
+        }
+        return start;
+    }
+
+    public boolean findExitCell(Cell cell) {
+        Cell exit = new Cell(0,0);
+        for (Cell[] vertex: vertices) {
+            if (vertex[vertex.length - 1].visited) {
+                exit = vertex[vertex.length - 2];
+                mazeWithPath[exit.getX()][exit.getY() + 1] = "//";
+                break;
+            }
+        }
+        return exit.getX() == cell.getX() && exit.getY() == cell.getY();
     }
 
     public void primAlgorithm() {
@@ -256,8 +375,15 @@ class Board implements Serializable {
         }
     }
 
-    public void printMaze() {
+    public void printMazeWithOutPath() {
+        printMaze(maze);
 
+    }
+    public void printMazeWithExit() {
+        printMaze(mazeWithPath);
+    }
+
+    private void printMaze(String[][] maze) {
         System.out.println();
         for (String[] str : maze) {
             System.out.println();
@@ -268,6 +394,8 @@ class Board implements Serializable {
         System.out.println();
         System.out.println();
     }
+
+
 
     public void enterAndExit() {
 
@@ -282,6 +410,7 @@ class Board implements Serializable {
 
             if (vertices[num][1].visited) {
                 maze[num][0] = "  ";
+                vertices[num][0].isVisited();
                 flag = false;
             }
         }
@@ -297,6 +426,7 @@ class Board implements Serializable {
 
             if (vertices[num][vertices[0].length - 2].visited) {
                 maze[num][vertices[0].length - 1] = "  ";
+                vertices[num][vertices[0].length - 1].isVisited();
                 flag = false;
             }
         }
@@ -308,15 +438,30 @@ class Cell implements Serializable {
     private final int x;
     private final int y;
     boolean visited;
+    boolean isExplore;
+    Cell parent = null;
 
     Cell(int x, int y) {
         this.x = x;
         this.y = y;
         this.visited = false;
+        this.isExplore = false;
     }
 
     public void isVisited() {
         this.visited = true;
+    }
+
+    public void SetIsExplore() {
+        this.isExplore = true;
+    }
+
+    public void setParent(Cell cell) {
+        this.parent = cell;
+    }
+
+    public Cell getParent() {
+        return parent;
     }
 
     public int getX() {
