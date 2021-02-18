@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.util.Random;
 
 public class GameOfLife {
+
     public static void main(String[] args) throws InterruptedException {
 
 //        Scanner scanner = new Scanner(System.in);
@@ -11,7 +12,6 @@ public class GameOfLife {
 //        int generation = scanner.nextInt();
 
         int size = Integer.parseInt(args[0]);
-
 
         CurrentGeneration cg = new CurrentGeneration(size);
         NextGeneration ng = new NextGeneration();
@@ -28,11 +28,10 @@ public class GameOfLife {
             Thread.sleep(200);
             try {
                 if (System.getProperty("os.name").contains("Windows"))
-                    new ProcessBuilder("cmd","/c","cls").inheritIO().start().waitFor();
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
                 else
                     Runtime.getRuntime().exec("clear");
-            }
-            catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException e) {
                 System.out.println(e.getMessage());
             }
             countGen++;
@@ -43,7 +42,6 @@ public class GameOfLife {
             ng.printNextGeneration();
             generation--;
         }
-
     }
 
     private static int countAlive(int size, Cell[][] generation) {
@@ -74,7 +72,6 @@ class CurrentGeneration {
     public int getRandom() {
         return random.nextInt(15) + 10;
     }
-
 
     public Cell[][] createCurrentGeneration(int size) {
 
@@ -250,7 +247,6 @@ class NextGeneration {
             System.out.println();
         }
     }
-
 }
 
 class Cell {
@@ -289,7 +285,6 @@ class Cell {
     public int getNeighbour() {
         return neighbour;
     }
-
 
     @Override
     public String toString() {
