@@ -1,293 +1,158 @@
-import java.io.IOException;
-import java.util.Random;
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.MatteBorder;
+import java.awt.*;
 
-public class GameOfLife {
+public class GameOfLife extends JFrame {
 
-    public static void main(String[] args) throws InterruptedException {
+    private final Color color = Color.GRAY;
+    public JPanel gridPanel;
+    public JPanel[][] panelCells;
+    public JLabel gen;
+    public JLabel alive;
+    JToggleButton start;
+    JToggleButton pause;
 
-//        Scanner scanner = new Scanner(System.in);
+    public GameOfLife() {
+        super("Game of Life");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(750, 500);
+        setLocationRelativeTo(null);
 
-//        int size = scanner.nextInt();
-//        long seed = scanner.nextLong();
-//        int generation = scanner.nextInt();
+        setLayout(new BorderLayout());
 
-        int size = Integer.parseInt(args[0]);
+        initComponents();
 
-        CurrentGeneration cg = new CurrentGeneration(size);
-        NextGeneration ng = new NextGeneration();
-        ng.copyGen(cg.getCurGen());
-
-        int generation = cg.getRandom();
-        int countGen = 1;
-        int alive = countAlive(size, cg.getCurGen());
-        System.out.println("Generation #" + countGen);
-        System.out.println("Alive: " + alive);
-        cg.printCurGen();
-
-        while (generation != 0) {
-            Thread.sleep(200);
-            try {
-                if (System.getProperty("os.name").contains("Windows"))
-                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                else
-                    Runtime.getRuntime().exec("clear");
-            } catch (IOException | InterruptedException e) {
-                System.out.println(e.getMessage());
-            }
-            countGen++;
-            System.out.println("Generation #" + countGen);
-            ng.countNeighbours();
-            alive = countAlive(size, ng.getNextGen());
-            System.out.println("Alive: " + alive);
-            ng.printNextGeneration();
-            generation--;
-        }
+        setResizable(false);
+        setVisible(true);
     }
 
-    private static int countAlive(int size, Cell[][] generation) {
-        int count = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+    public void initComponents() {
+
+        JPanel westPanel = new JPanel();
+        westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.Y_AXIS));
+        westPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+        westPanel.setMaximumSize(new Dimension(200, 500));
+        westPanel.setAlignmentX(LEFT_ALIGNMENT);
+        westPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+        JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.LINE_AXIS));
+
+        start = new JToggleButton("->");
+        pause = new JToggleButton("||");
+        pause.setName("PlayToggleButton");
+
+        start.addActionListener(e -> startGeneration());
+        pause.addActionListener(e -> myListener());
+
+        JButton reset = new JButton("@");
+        reset.setName("ResetButton");
+
+        buttonsPanel.add(start);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        buttonsPanel.add(pause);
+        buttonsPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+        buttonsPanel.add(reset);
+
+        JPanel countPanel = new JPanel();
+        countPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+        countPanel.setLayout(new BoxLayout(countPanel, BoxLayout.Y_AXIS));
+        countPanel.add(Box.createHorizontalGlue());
+
+
+        gen = new JLabel();
+        gen.setName("GenerationLabel");
+        gen.setText("Generation #");
+
+        alive = new JLabel();
+        alive.setName("AliveLabel");
+        alive.setText("Alive: ");
+
+        countPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        countPanel.add(gen);
+        countPanel.add(Box.createRigidArea(new Dimension(10, 0)));
+        countPanel.add(alive);
+
+        westPanel.add(buttonsPanel);
+        westPanel.add(countPanel);
+
+        add(westPanel, BorderLayout.WEST);
+        add(setGridPanel(), BorderLayout.CENTER);
+    }
+
+    public JPanel setGridPanel() {
+
+        int sizeGrid = 20;
+        gridPanel = new JPanel(new GridLayout(sizeGrid, sizeGrid));
+        panelCells = new JPanel[sizeGrid][sizeGrid];
+
+        for (int row = 0; row < sizeGrid; row++) {
+            for (int col = 0; col < sizeGrid; col++) {
+                JPanel panelCell = new JPanel();
+                panelCell.setBackground(Color.WHITE);
+                Border border;
+                if (row < sizeGrid - 1) {
+                    if (col < sizeGrid - 1) {
+                        border = new MatteBorder(1, 1, 0, 0, color);
+                    } else {
+                        border = new MatteBorder(1, 1, 0, 1, color);
+                    }
+                } else {
+                    if (col < sizeGrid - 1) {
+                        border = new MatteBorder(1, 1, 1, 0, color);
+                    } else {
+                        border = new MatteBorder(1, 1, 1, 1, color);
+                    }
+                }
+                panelCells[row][col] = panelCell;
+                panelCell.setBorder(border);
+                gridPanel.add(panelCell);
+            }
+        }
+        return gridPanel;
+    }
+
+    public void updateGridPanel(Cell[][] generation, int genNum, int aliveNum) {
+
+        gen.setText("Generation #" + genNum);
+        alive.setText("Alive: " + aliveNum);
+
+        for (int i = 0; i < generation.length; i++) {
+            for (int j = 0; j < generation.length; j++) {
                 if (generation[i][j].alive) {
-                    count++;
-                }
-            }
-        }
-        return count;
-    }
-}
-
-class CurrentGeneration {
-
-    int size;
-    Cell[][] curGen;
-    Random random;
-
-    CurrentGeneration(int size) {
-        this.size = size;
-        this.random = new Random();
-        this.curGen = createCurrentGeneration(size);
-    }
-
-    public int getRandom() {
-        return random.nextInt(15) + 10;
-    }
-
-    public Cell[][] createCurrentGeneration(int size) {
-
-        curGen = new Cell[size][size];
-
-        for (int i = 0; i < curGen.length; i++) {
-            for (int j = 0; j < curGen.length; j++) {
-                if (random.nextBoolean()) {
-                    curGen[i][j] = new Cell(i, j, true);
+                    panelCells[i][j].setBackground(color);
                 } else {
-                    curGen[i][j] = new Cell(i, j, false);
-                }
-            }
-        }
-        return curGen;
-    }
-
-    public Cell[][] getCurGen() {
-        return curGen;
-    }
-
-    public void printCurGen() {
-        for (Cell[] row : curGen) {
-            for (Cell cell : row) {
-                if (cell.alive) {
-                    System.out.print("O");
-                } else {
-                    System.out.print(" ");
-                }
-            }
-            System.out.println();
-        }
-    }
-}
-
-class NextGeneration {
-
-    Cell[][] nextGen;
-    int[][] direction = {{-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}};
-    int size;
-
-    public Cell[][] getNextGen() {
-        return nextGen;
-    }
-
-    public void checkNeighbours(Cell curCell) {
-
-        int neighbours = 0;
-
-        for (int[] dir : direction) {
-            if (curCell.getX() + dir[0] < 0) {
-                if (curCell.getY() + dir[1] < curCell.getY()) {
-                    if (curCell.getY() == 0) {
-                        if (nextGen[size - 1][size - 1].alive) {
-                            neighbours++;
-                        }
-                    } else if (nextGen[size - 1][curCell.getY() + dir[1]].alive) {
-                        neighbours++;
-                    }
-                } else if (curCell.getY() + dir[1] == curCell.getY()) {
-                    if (nextGen[size - 1][curCell.getY() + dir[1]].alive) {
-                        neighbours++;
-                    }
-                } else if (curCell.getY() + dir[1] > curCell.getY()) {
-                    if (curCell.getY() == size - 1) {
-                        if (nextGen[size - 1][0].alive) {
-                            neighbours++;
-                        }
-                    } else if (nextGen[size - 1][curCell.getY() + dir[1]].alive) {
-                        neighbours++;
-                    }
-                }
-            } else if (curCell.getX() + dir[0] > curCell.getX() && curCell.getY() + dir[1] < 0) {
-                if (curCell.getX() == size - 1 && curCell.getY() == 0) {
-                    if (nextGen[0][size - 1].alive) {
-                        neighbours++;
-                    }
-                } else if (nextGen[curCell.getX() + dir[0]][size - 1].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] > curCell.getX() && curCell.getY() + dir[1] > size - 1) {
-                if (curCell.getX() == size - 1 && curCell.getY() == size - 1) {
-                    if (nextGen[0][0].alive) {
-                        neighbours++;
-                    }
-                } else if (nextGen[curCell.getX() + dir[0]][0].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] == curCell.getX() && curCell.getY() + dir[1] < 0) {
-                if (nextGen[curCell.getX()][size - 1].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] == curCell.getX() && curCell.getY() + dir[1] > size - 1) {
-                if (nextGen[curCell.getX()][0].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] < curCell.getX() && curCell.getY() + dir[1] < 0) {
-                if (nextGen[curCell.getX() + dir[0]][size - 1].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] < curCell.getX() && curCell.getY() + dir[1] > size - 1) {
-                if (nextGen[curCell.getX() + dir[0]][0].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] > size - 1 && curCell.getY() + dir[1] > size - 1) {
-                if (curCell.getY() == size - 1) {
-                    if (nextGen[0][0].alive) {
-                        neighbours++;
-                    } else if (nextGen[0][curCell.getY() + dir[1]].alive) {
-                        neighbours++;
-                    }
-                }
-            } else if (curCell.getX() + dir[0] > size - 1 && curCell.getY() + dir[1] > curCell.getY()) {
-                if (nextGen[0][curCell.getY() + dir[1]].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] > size - 1 && curCell.getY() + dir[1] == curCell.getY()) {
-                if (nextGen[0][curCell.getY()].alive) {
-                    neighbours++;
-                }
-            } else if (curCell.getX() + dir[0] > size - 1 && curCell.getY() + dir[1] < curCell.getY()) {
-                if (nextGen[0][curCell.getY() + dir[1]].alive) {
-                    neighbours++;
-                }
-            } else if (nextGen[curCell.getX() + dir[0]][curCell.getY() + dir[1]].alive) {
-                neighbours++;
-            }
-        }
-        curCell.setNeighbour(neighbours);
-    }
-
-    public void countNeighbours() {
-        size = nextGen.length;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                checkNeighbours(nextGen[i][j]);
-            }
-        }
-        for (Cell[] cells : nextGen) {
-            for (int j = 0; j < nextGen.length; j++) {
-                if (cells[j].alive) {
-                    if (cells[j].getNeighbour() != 2 && cells[j].getNeighbour() != 3) {
-                        cells[j].isDead();
-                    }
-                } else {
-                    if (cells[j].getNeighbour() == 3) {
-                        cells[j].isAlive();
-                    }
+                    panelCells[i][j].setBackground(Color.WHITE);
                 }
             }
         }
     }
 
-    public void copyGen(Cell[][] curGen) {
+    public synchronized void myListener() {
 
-        nextGen = new Cell[curGen.length][curGen.length];
-
-        for (int i = 0; i < nextGen.length; i++) {
-            System.arraycopy(curGen[i], 0, nextGen[i], 0, nextGen.length);
-        }
-    }
-
-    public void printNextGeneration() {
-
-        for (Cell[] row : nextGen) {
-            for (Cell cell : row) {
-                if (cell.alive) {
-                    System.out.print("O");
-                } else {
-                    System.out.print(" ");
-                }
+        if (pause.isSelected()) {
+            try {
+                wait(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            System.out.println();
         }
-    }
-}
-
-class Cell {
-
-    private final int x;
-    private final int y;
-    boolean alive;
-    private int neighbour;
-
-    public Cell(int x, int y, boolean alive) {
-        this.x = x;
-        this.y = y;
-        this.alive = alive;
+        pause.setSelected(false);
+        notifyAll();
     }
 
-    public int getX() {
-        return x;
+    public boolean startGeneration() {
+        gen.setText("Generation #0");
+        alive.setText("Alive: 0");
+        return start.isSelected();
     }
 
-    public int getY() {
-        return y;
+    public JLabel getGen() {
+        return gen;
     }
 
-    public void isDead() {
-        this.alive = false;
-    }
-
-    public void isAlive() {
-        this.alive = true;
-    }
-
-    public void setNeighbour(int num) {
-        this.neighbour = num;
-    }
-
-    public int getNeighbour() {
-        return neighbour;
-    }
-
-    @Override
-    public String toString() {
-        return x + "," + y + "," + alive + "," + neighbour;
+    public JLabel getAlive() {
+        return alive;
     }
 }
