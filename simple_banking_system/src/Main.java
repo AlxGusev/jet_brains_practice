@@ -7,74 +7,76 @@ public class Main {
         final Scanner scanner = new Scanner(System.in);
 
         Account account = null;
+        while (true) {
 
-        boolean stayInAccount = true;
-        boolean logIn = false;
-        int num;
+            printLogInMenu();
 
-        while (stayInAccount) {
+            int pick1 = Integer.parseInt(scanner.nextLine());
 
-            if (!logIn) {
-
-                System.out.println("1. Create an account");
-                System.out.println("2. Log into account");
-                System.out.println("0. Exit");
-
-                num = Integer.parseInt(scanner.nextLine());
-                switch (num) {
-                    case 1:
-                        account = new Account();
-                        break;
-                    case 2:
-                        logIn = logIntoAccount(account, scanner);
-                        break;
-                    case 0:
-                        stayInAccount = false;
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected value: " + num);
-                }
-
-            } else {
-
-                System.out.println("1. Balance");
-                System.out.println("2. Log out");
-                System.out.println("0. Exit");
-
-                num = Integer.parseInt(scanner.nextLine());
-
-                switch (num) {
-                    case 1:
-                        account.getBalance();
-                        break;
-                    case 2:
-                        logIn = false;
-                        System.out.println("You have successfully logged out!");
-                        break;
-                    case 0:
-                        stayInAccount = false;
-                        break;
-                }
+            switch (pick1) {
+                case 1:
+                    account = new Account();
+                    break;
+                case 2:
+                    logIntoAccount(account, scanner);
+                    break;
+                case 0:
+                    printExit();
+                    System.exit(0);
+                    break;
             }
         }
-        System.out.println("Bye");
-        System.exit(0);
     }
 
-    public static boolean logIntoAccount(Account account, Scanner scanner) {
+    private static void printAccountMenu() {
+        System.out.println("1. Balance");
+        System.out.println("2. Log out");
+        System.out.println("0. Exit");
+    }
+
+    private static void printLogInMenu() {
+        System.out.println("1. Create an account");
+        System.out.println("2. Log into account");
+        System.out.println("0. Exit");
+    }
+
+    private static void printExit() {
+        System.out.println("Bye");
+    }
+
+    public static void logIntoAccount(Account account, Scanner scanner) {
 
         System.out.println("Enter your card number:");
         String number = scanner.nextLine();
         System.out.println("Enter your PIN:");
         String pin = scanner.nextLine();
 
-        if (account == null || !account.getCreditCard().getCardNumber().equals(number) ||
-                !account.getCreditCard().getPinCode().equals(pin)) {
+        if (account == null || !account.getCreditCard().getCardNumber().matches(number) ||
+                !account.getCreditCard().getPinCode().matches(pin)) {
             System.out.println("Wrong card number or PIN!");
-            return false;
+            return;
         }
         System.out.println("You have successfully logged in!");
-        return true;
-    }
 
+        boolean logOut = false;
+        while (!logOut) {
+
+            printAccountMenu();
+
+            int pick2 = Integer.parseInt(scanner.nextLine());
+
+            switch (pick2) {
+                case 1:
+                    account.getBalance();
+                    break;
+                case 2:
+                    logOut = true;
+                    break;
+                case 0:
+                    printExit();
+                    System.exit(0);
+                    break;
+            }
+        }
+    }
 }
