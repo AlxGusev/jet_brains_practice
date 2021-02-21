@@ -15,7 +15,25 @@ public class CreditCard {
     }
 
     private String setCardNumber() {
-        return String.format("400000%05d%05d", ThreadLocalRandom.current().nextInt(100000), ThreadLocalRandom.current().nextInt(100000));
+
+        StringBuilder number = new StringBuilder(String.format("400000%09d", ThreadLocalRandom.current().nextInt(1000000000)));
+
+        int sum = 0;
+        for (int i = 0; i < 15; i++) {
+            int n = number.charAt(i) - 48;
+            if (i % 2 == 0) {
+                n *= 2;
+                if (n > 9) {
+                    n -= 9;
+                }
+            }
+            sum += n;
+        }
+
+        int lastDigit = (10 - sum % 10) % 10;
+        number.append(lastDigit);
+
+        return number.toString();
     }
 
     public String getPinCode() {
