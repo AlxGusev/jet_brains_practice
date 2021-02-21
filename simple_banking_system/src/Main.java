@@ -1,12 +1,22 @@
+import org.sqlite.SQLiteDataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 public class Main {
 
+    public static String url = "jdbc:sqlite:";
+
     public static void main(String[] args) {
+
+        createDB(args[1]);
 
         final Scanner scanner = new Scanner(System.in);
 
         Account account = null;
+
         while (true) {
 
             printLogInMenu();
@@ -16,6 +26,7 @@ public class Main {
             switch (pick1) {
                 case 1:
                     account = new Account();
+                    addCardToDB(account);
                     break;
                 case 2:
                     logIntoAccount(account, scanner);
@@ -28,20 +39,51 @@ public class Main {
         }
     }
 
-    private static void printAccountMenu() {
-        System.out.println("1. Balance");
-        System.out.println("2. Log out");
-        System.out.println("0. Exit");
+    public static void addCardToDB(Account account) {
+
+        String sql = "INSERT INTO card (number, pin, balance) VALUES (" +
+                account.getCreditCard().getCardNumber() + ", " +
+                account.getCreditCard().getPinCode() + ", " +
+                account.getBalance() + ")";
+
+        SQLiteDataSource dataSource = new SQLiteDataSource();
+        dataSource.setUrl(url);
+
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement()) {
+
+            System.out.println("Add card to the table");
+
+            statement.executeUpdate(sql);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void printLogInMenu() {
-        System.out.println("1. Create an account");
-        System.out.println("2. Log into account");
-        System.out.println("0. Exit");
-    }
+    public static void createDB(String fileName) {
 
-    private static void printExit() {
-        System.out.println("Bye");
+        url += fileName;
+
+        String sql = "CREATE TABLE IF NOT EXISTS card (" +
+                "id INTEGER PRIMARY KEY, " +
+                "number TEXT, " +
+                "pin TEXT, " +
+                "balance INTEGER DEFAULT 0)";
+
+        SQLiteDataSource dataSource = new SQLiteDataSource();
+        dataSource.setUrl(url);
+
+        try (Connection con = dataSource.getConnection();
+             Statement statement = con.createStatement()) {
+
+            System.out.println("Connected to DB" + fileName);
+
+            statement.executeUpdate(sql);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void logIntoAccount(Account account, Scanner scanner) {
@@ -78,5 +120,21 @@ public class Main {
                     break;
             }
         }
+    }
+
+    private static void printAccountMenu() {
+        System.out.println("1. Balance");
+        System.out.println("2. Log out");
+        System.out.println("0. Exit");
+    }
+
+    private static void printLogInMenu() {
+        System.out.println("1. Create an account");
+        System.out.println("2. Log into account");
+        System.out.println("0. Exit");
+    }
+
+    private static void printExit() {
+        System.out.println("Bye");
     }
 }

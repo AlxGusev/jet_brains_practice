@@ -1,12 +1,11 @@
-
 public class Account {
 
     private final CreditCard creditCard;
-    private long balance;
+    private long balance = 0;
+    private int accountId;
 
     Account() {
         this.creditCard = createCreditCard();
-        balance = 0;
     }
 
     private CreditCard createCreditCard() {
@@ -21,8 +20,18 @@ public class Account {
         return creditCard;
     }
 
-    public void getBalance() {
+    public long getBalance() {
         System.out.println("Balance: " + balance);
+        return balance;
     }
 
+    public int getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(int id) {
+        this.accountId = id;
+    }
 }
+
+
