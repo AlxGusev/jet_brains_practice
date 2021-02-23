@@ -18,17 +18,7 @@ public class CreditCard {
 
         StringBuilder number = new StringBuilder(String.format("400000%09d", ThreadLocalRandom.current().nextInt(1000000000)));
 
-        int sum = 0;
-        for (int i = 0; i < 15; i++) {
-            int n = number.charAt(i) - 48;
-            if (i % 2 == 0) {
-                n *= 2;
-                if (n > 9) {
-                    n -= 9;
-                }
-            }
-            sum += n;
-        }
+        int sum = Main.luhnAlgorithm(number.toString());
 
         int lastDigit = (10 - sum % 10) % 10;
         number.append(lastDigit);
