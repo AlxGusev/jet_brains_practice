@@ -1,0 +1,20 @@
+Paging/PagingInterface.java
+ Paging.PagingInterface
+Main.java
+ Main
+JsonParser/FeaturedJsonParser.java
+ JsonParser.FeaturedJsonParser
+View/Client.java
+ View.Client
+JsonParser/NewAlbumsJsonParser.java
+ JsonParser.NewAlbumsJsonParser
+JsonParser/TokenJsonParser.java
+ JsonParser.TokenJsonParser
+JsonParser/SpotifyJsonParserInterface.java
+ JsonParser.SpotifyJsonParserInterface
+HttpServer/Server.java
+ HttpServer.Server
+JsonParser/CategoriesJsonParser.java
+ JsonParser.CategoriesJsonParser
+SpotifyRequest/SpotifyRequest.java
+ SpotifyRequest.SpotifyRequest
