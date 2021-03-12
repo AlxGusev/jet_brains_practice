@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.message.Feedback;
 import com.example.demo.model.Quiz;
-import com.example.demo.repository.QuizRepositoryImpl;
+import com.example.demo.servise.QuizService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -13,57 +13,72 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/quizzes")
 @Validated
 public class QuizController {
 
-    private final QuizRepositoryImpl quizRepository;
+    private final QuizService quizService;
     private final String QUIZ_NOT_FOUND = "Quiz not found";
 
     @Autowired
-    public QuizController(QuizRepositoryImpl quizRepository) {
-        this.quizRepository = quizRepository;
+    public QuizController(QuizService quizService) {
+        this.quizService = quizService;
     }
 
-    @GetMapping(path = "/{id}")
+    @GetMapping("/{id}")
     public Quiz getQuizById(@PathVariable int id) {
-        Quiz quiz = quizRepository.getQuizById(id);
-        if (quiz != null) {
-            return quiz;
-        } else {
+
+        Optional<Quiz> quiz = quizService.getQuizById(id);
+
+        if (quiz.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND);
         }
+
+        return quiz.get();
     }
 
     @GetMapping
     public List<Quiz> getAllQuizzes() {
-        return quizRepository.getListOfQuizzes();
+        return quizService.getAllQuizzes();
     }
 
     @PostMapping
-    public Quiz createNewQuiz(@Valid @RequestBody Quiz quiz) {
-        Quiz newQuiz = new Quiz(quiz.getTitle(), quiz.getText(), quiz.getOptions(), quiz.getAnswer());
-        quizRepository.addToListOfQuizzes(newQuiz);
-        return newQuiz;
+    public Quiz createNewQuiz(@Valid @RequestBody Quiz quizToAdd) {
+        Quiz quiz = new Quiz(quizToAdd.getTitle(), quizToAdd.getText(), quizToAdd.getOptions(), quizToAdd.getAnswer());
+        System.out.println(quiz);
+        quizService.addQuiz(quiz);
+        return quiz;
     }
 
-    @PostMapping(path = "/{id}/solve")
-    public String solveQuiz(@PathVariable @Min(1) int id, @RequestBody Map<String, List<Integer>> json) {
+    @PostMapping("/{id}/solve")
+    public String solveQuiz(@PathVariable @Min(1) int id, @RequestBody Map<String, List<Integer>> jsonAnswer) {
 
-        List<Integer> answer = json.get("answer");
+        if (!jsonAnswer.containsKey("answer")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "there is no answer key");
+        }
 
-        Quiz quiz = quizRepository.getQuizById(id);
+        Optional<Quiz> optQuiz = quizService.getQuizById(id);
 
-        if (quiz == null) {
+        if (optQuiz.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND);
         }
 
-        if (quiz.getAnswer().equals(answer)) {
+        if (optQuiz.get().checkAnswer(jsonAnswer.get("answer"))) {
             return Feedback.CORRECT_ANSWER.toString();
         } else {
             return Feedback.WRONG_ANSWER.toString();
+        }
+    }
+
+    @DeleteMapping("/{id}/delete")
+    public void deleteQuiz(@PathVariable int id) {
+        try {
+            quizService.deleteQuiz(id);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, QUIZ_NOT_FOUND);
         }
     }
 }
