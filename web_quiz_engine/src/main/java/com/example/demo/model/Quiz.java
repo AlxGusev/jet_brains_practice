@@ -16,7 +16,7 @@ public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private int id;
+    private Long id;
 
     @NotBlank(message = "title can not be empty")
     private String title;
@@ -47,7 +47,7 @@ public class Quiz {
         this.answer = answer;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
