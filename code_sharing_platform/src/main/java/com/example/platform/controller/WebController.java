@@ -1,6 +1,5 @@
 package com.example.platform.controller;
 
-import com.example.platform.model.Code;
 import com.example.platform.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,8 +31,7 @@ public class WebController {
 
     @GetMapping(value = "/code/{id}", produces = MediaType.TEXT_HTML_VALUE)
     public String getHtmlCodeById(@PathVariable("id") UUID id, Model model) {
-        Code code = service.findCodeById(id);
-        model.addAttribute("code", code);
+        model.addAttribute("code", service.findCodeById(id));
         return "show";
     }
 
