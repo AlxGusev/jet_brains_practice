@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1ef92e9-ed59-43a4-a4d1-edd7bc8d4587" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/json_database.iml" beforeDir="false" afterPath="$PROJECT_DIR$/json_database.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/json_database/client/ClientSide.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/json_database/server/ServerSide.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/client/ClientSide.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/ServerSide.java" beforeDir="false" />
-    </list>
+    <list default="true" id="c1ef92e9-ed59-43a4-a4d1-edd7bc8d4587" name="Default Changelist" comment="in progress" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -94,8 +83,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1617298222986</updated>
-      <workItem from="1617298229828" duration="1245000" />
+      <workItem from="1617298229828" duration="1700000" />
     </task>
+    <task id="LOCAL-00001" summary="in progress">
+      <created>1617299667941</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1617299667941</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -111,5 +108,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="in progress" />
+    <option name="LAST_COMMIT_MESSAGE" value="in progress" />
   </component>
 </project>
