@@ -2,6 +2,7 @@ package client.service;
 
 import client.Request;
 import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -15,25 +16,22 @@ public class ClientService {
     public String parseRequest(Request request) throws IOException {
 
         if (request.getFile() != null) {
-
-            Request req = readClientFile(request.getFile());
-            if (!(req == null)) {
-                return req.toJson();
-            } else {
-                throw new IOException();
-            }
+            return readClintFile(request.getFile());
         }
         return request.toJson();
     }
 
-    public Request readClientFile(String filePath) {
-        Request request = null;
-        try (Reader reader = Files.newBufferedReader(Path.of(CLIENT_FILE_PATH + filePath))) {
-            Gson gson = new Gson();
-            request = gson.fromJson(reader, Request.class);
+    public String readClintFile(String fileName) {
+
+        String jo = "";
+
+        try (Reader reader = Files.newBufferedReader(Path.of(CLIENT_FILE_PATH + fileName))) {
+
+            jo = JsonParser.parseReader(reader).toString();
+
         } catch (IOException e) {
-            System.out.println("File: " + filePath + " doesn't exist");
+            System.out.println("File: " + fileName + " doesn't exist");
         }
-        return request;
+        return jo;
     }
 }

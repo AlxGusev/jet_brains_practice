@@ -1,6 +1,5 @@
 package server.service;
 
-import client.model.Person;
 import com.google.gson.*;
 import server.Response;
 import server.Status;
@@ -17,8 +16,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ServerService {
 
-    private final String FILE_PATH = "./JSON Database/task/src/server/data/db.json";
-//    private final String FILE_PATH = ".\\src\\server\\data\\db.json";
+    private final String FILE_PATH = "./src/main/java/server/data/db.json";
     private final String REASON = "No such key";
     ReadWriteLock lock = new ReentrantReadWriteLock();
     public boolean exit = false;
@@ -64,19 +62,27 @@ public class ServerService {
 
                 JsonObject jo = jsonElement.getAsJsonObject();
 
-                Person person = gson.fromJson(jo.get("value"), Person.class);
-
                 JsonArray keyArray = request.get("key").getAsJsonArray();
                 JsonElement lastElement = keyArray.get(keyArray.size() - 1);
 
                 if ("launches".equals(lastElement.getAsString())) {
-                    person.getRocket().setLaunches(request.get("value").getAsString());
-                    jo.add("value", gson.toJsonTree(person));
+
+                    JsonObject value = jo.get("value").getAsJsonObject();
+                    JsonObject rocket = value.get("rocket").getAsJsonObject();
+                    rocket.add("launches", request.get("value"));
+                    value.add("rocket", rocket);
+                    jo.add("value", value);
+
                     gson.toJson(jo, writer);
                     response.setStatus(Status.OK);
                 } else if ("year".equals(lastElement.getAsString())) {
-                    person.getCar().setYear(null);
-                    jo.add("value", gson.toJsonTree(person));
+
+                    JsonObject value = jo.get("value").getAsJsonObject();
+                    JsonObject car = value.get("car").getAsJsonObject();
+                    car.add("year", null);
+                    value.add("car", car);
+                    jo.add("value", value);
+
                     gson.toJson(jo, writer);
                     response.setStatus(Status.OK);
                 } else {
@@ -107,18 +113,17 @@ public class ServerService {
 
         if ("person".equals(db.get("key").getAsString())) {
 
-            Person person = gson.fromJson(db.get("value"), Person.class);
-
             JsonArray keyArray = request.get("key").getAsJsonArray();
 
             JsonElement lastElement = keyArray.get(keyArray.size() - 1);
 
             if ("person".equals(lastElement.getAsString())) {
                 response.setStatus(Status.OK);
-                response.setValue(gson.toJsonTree(person));
+                response.setValue(gson.toJsonTree(db.get("value")));
             } else if ("name".equals(lastElement.getAsString())) {
+                JsonObject value = db.get("value").getAsJsonObject();
                 response.setStatus(Status.OK);
-                response.setValue(gson.toJsonTree(person.getName()));
+                response.setValue(gson.toJsonTree(value.get("name")));
             } else {
                 response.setStatus(Status.OK);
                 response.setValue(db.get("value"));
