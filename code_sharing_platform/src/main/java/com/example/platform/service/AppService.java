@@ -22,6 +22,7 @@ public class AppService {
     }
 
     public UUID saveCode(Code codeToAdd) {
+
         if (codeToAdd.getTime() > 0) {
             codeToAdd.setHasTimeLimit(true);
         }
