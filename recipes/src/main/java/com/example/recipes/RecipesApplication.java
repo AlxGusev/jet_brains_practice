@@ -1,6 +1,6 @@
 package com.example.recipes;
 
-import com.example.recipes.spring.RecipeSecurityConfig;
+import com.example.recipes.config.RecipeSecurityConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

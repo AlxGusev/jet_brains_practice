@@ -1,8 +1,8 @@
-package com.example.recipes.service;
+package com.example.recipes.user;
 
-import com.example.recipes.model.User;
-import com.example.recipes.persistence.IUserRepository;
-import com.example.recipes.web.dto.UserDto;
+import com.example.recipes.user.User;
+import com.example.recipes.user.IUserRepository;
+import com.example.recipes.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

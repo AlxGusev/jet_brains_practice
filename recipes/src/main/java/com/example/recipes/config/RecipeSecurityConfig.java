@@ -1,6 +1,6 @@
-package com.example.recipes.spring;
+package com.example.recipes.config;
 
-import com.example.recipes.security.RecipeUserDetailsService;
+import com.example.recipes.user.security.RecipeUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

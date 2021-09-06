@@ -1,4 +1,4 @@
-package com.example.recipes.validation;
+package com.example.recipes.user.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

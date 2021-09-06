@@ -1,10 +1,8 @@
-package com.example.recipes.service;
+package com.example.recipes.recipe;
 
-import com.example.recipes.model.Recipe;
-import com.example.recipes.model.User;
-import com.example.recipes.persistence.IRecipeRepository;
-import com.example.recipes.persistence.IUserRepository;
-import com.example.recipes.web.dto.RecipeDto;
+
+import com.example.recipes.user.User;
+import com.example.recipes.user.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -135,7 +133,7 @@ public class RecipeService {
     }
 
     private List<RecipeDto> convertToRecipesList(List<Recipe> list) {
-        ArrayList<RecipeDto> recipesDtoList = new ArrayList<>();
+        List<RecipeDto> recipesDtoList = new ArrayList<>();
         for (Recipe r : list) {
             recipesDtoList.add(convertToRecipeDto(r));
         }

@@ -1,7 +1,7 @@
-package com.example.recipes.security;
+package com.example.recipes.user.security;
 
-import com.example.recipes.model.User;
-import com.example.recipes.persistence.IUserRepository;
+import com.example.recipes.user.User;
+import com.example.recipes.user.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

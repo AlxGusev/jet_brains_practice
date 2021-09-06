@@ -1,4 +1,4 @@
-package com.example.recipes.web.dto;
+package com.example.recipes.recipe;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

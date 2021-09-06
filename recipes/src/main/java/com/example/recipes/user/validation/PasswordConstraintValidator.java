@@ -1,4 +1,4 @@
-package com.example.recipes.validation;
+package com.example.recipes.user.validation;
 
 import org.passay.AllowedRegexRule;
 import org.passay.PasswordData;

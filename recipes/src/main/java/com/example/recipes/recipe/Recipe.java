@@ -1,4 +1,6 @@
-package com.example.recipes.model;
+package com.example.recipes.recipe;
+
+import com.example.recipes.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

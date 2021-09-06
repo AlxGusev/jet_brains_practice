@@ -1,6 +1,6 @@
-package com.example.recipes.persistence;
+package com.example.recipes.recipe;
 
-import com.example.recipes.model.Recipe;
+import com.example.recipes.recipe.Recipe;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

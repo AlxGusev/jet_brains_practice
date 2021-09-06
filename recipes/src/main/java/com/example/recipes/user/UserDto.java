@@ -1,6 +1,7 @@
-package com.example.recipes.web.dto;
+package com.example.recipes.user;
 
-import com.example.recipes.validation.ValidPassword;
+import com.example.recipes.recipe.RecipeDto;
+import com.example.recipes.user.validation.ValidPassword;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;

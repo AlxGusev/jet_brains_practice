@@ -1,7 +1,7 @@
-package com.example.recipes.web.controller;
+package com.example.recipes.user;
 
-import com.example.recipes.service.UserService;
-import com.example.recipes.web.dto.UserDto;
+import com.example.recipes.user.UserService;
+import com.example.recipes.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,12 +13,12 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/register")
-public class RegistrationController {
+public class UserRegistrationController {
 
     private final UserService userService;
 
     @Autowired
-    public RegistrationController(UserService userService) {
+    public UserRegistrationController(UserService userService) {
         this.userService = userService;
     }
 
