@@ -1,18 +1,17 @@
 package com.example.recipes.user.security;
 
-import com.example.recipes.user.User;
 import com.example.recipes.user.IUserRepository;
+import com.example.recipes.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,10 +32,12 @@ public class RecipeUserDetailsService implements UserDetailsService {
         Optional<User> userByEmail = userRepository.findByEmail(email);
 
         if (userByEmail.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("User with email: %s not found", email));
+            throw new UsernameNotFoundException(String.format("Username was not found: %s", email));
         }
 
         User user = userByEmail.get();
+
+        List<GrantedAuthority> auths = AuthorityUtils.createAuthorityList(ROLE_USER);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -45,10 +46,6 @@ public class RecipeUserDetailsService implements UserDetailsService {
                 true,
                 true,
                 true,
-                getAuthorities(ROLE_USER));
-    }
-
-    private Collection<? extends GrantedAuthority> getAuthorities(String role) {
-        return Arrays.asList(new SimpleGrantedAuthority(role));
+                auths);
     }
 }

@@ -1,7 +1,5 @@
 package com.example.recipes.user;
 
-import com.example.recipes.user.UserService;
-import com.example.recipes.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
