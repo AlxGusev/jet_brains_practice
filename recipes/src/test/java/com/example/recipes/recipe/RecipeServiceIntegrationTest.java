@@ -1,12 +1,8 @@
-package com.example.recipes.integrationtests.recipe;
+package com.example.recipes.recipe;
 
-import com.example.recipes.recipe.IRecipeRepository;
-import com.example.recipes.recipe.Recipe;
-import com.example.recipes.recipe.RecipeService;
 import com.example.recipes.user.IUserRepository;
 import com.example.recipes.user.User;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
