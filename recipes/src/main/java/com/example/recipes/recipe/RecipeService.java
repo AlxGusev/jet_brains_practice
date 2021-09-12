@@ -43,7 +43,7 @@ public class RecipeService {
         return recipeRepository.save(recipe);
     }
 
-    public Recipe update(Long id, Recipe recipeToUpdate, String email) {
+    public Recipe updateRecipe(Long id, Recipe recipeToUpdate, String email) {
 
         Optional<Recipe> recipeById = recipeRepository.findById(id);
 

@@ -51,7 +51,7 @@ public class RecipeController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateRecipe(@PathVariable("id") Long id, @Valid @RequestBody RecipeDto recipeDto, HttpServletRequest request) {
 
-        Recipe recipe = recipeService.update(id, convertToEntity(recipeDto), request.getUserPrincipal().getName());
+        Recipe recipe = recipeService.updateRecipe(id, convertToEntity(recipeDto), request.getUserPrincipal().getName());
 
         if (recipe.equals(convertToEntity(recipeDto))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
