@@ -2,6 +2,7 @@ package com.example.recipes.user;
 
 import com.example.recipes.recipe.RecipeDto;
 import com.example.recipes.user.validation.ValidPassword;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -17,6 +18,7 @@ public class UserDto {
     @Size(min = 8)
     private String password;
 
+    @JsonIgnore
     private Set<RecipeDto> recipes;
 
     public UserDto() {

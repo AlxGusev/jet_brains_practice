@@ -22,6 +22,14 @@ public class UserRegistrationController {
 
     @PostMapping
     public ResponseEntity<Object> register(@Valid @RequestBody UserDto userDto) {
-        return userService.registerNewUser(userDto);
+
+        if (userService.registerNewUser(convertToUserEntity(userDto))) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    private User convertToUserEntity(UserDto userDto) {
+        return new User(userDto.getEmail(), userDto.getPassword(), false, null);
     }
 }

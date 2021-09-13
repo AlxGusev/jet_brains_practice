@@ -1,10 +1,6 @@
 package com.example.recipes.user;
 
-import com.example.recipes.user.User;
-import com.example.recipes.user.IUserRepository;
-import com.example.recipes.user.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,18 +20,17 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<Object> registerNewUser(UserDto userDto) {
-
-        User user = convertToUserEntity(userDto);
+    public boolean registerNewUser(User user) {
 
         if (emailExist(user.getEmail())) {
-            return ResponseEntity.badRequest().body(String.format("Email : %s already exists.", user.getEmail()));
+            return false;
         }
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
         user.setRoles("ROLE_USER");
         userRepository.save(user);
-        return ResponseEntity.ok().build();
+        return true;
     }
 
     private boolean emailExist(String email) {
@@ -43,7 +38,5 @@ public class UserService {
         return byEmail.isPresent();
     }
 
-    private User convertToUserEntity(UserDto userDto) {
-        return new User(userDto.getEmail(), userDto.getPassword(), false, null);
-    }
+
 }
