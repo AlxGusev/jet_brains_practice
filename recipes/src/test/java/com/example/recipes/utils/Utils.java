@@ -13,74 +13,67 @@ import java.util.Map;
 
 public class Utils {
 
-    public static UserDto getDefaultUserDto() {
-        return new UserDto(getDefaultEmail(), getDefaultPassword());
+    public static final Long ID = 1L;
+    public static final String EMAIL = "test@test.com";
+    public static final String PASSWORD = "test_test";
+    public static final String DIFFERENT_EMAIL = "testDifferent@test.com";
+    public static final Map<String, String> WRONG_PARAM = getWrongParam();
+    public static final Map<String, String> CATEGORY_PARAM = getCategoryParam();
+    public static final Map<String, String> NAME_PARAM = getNameParam();
+    public static final String ENCODED_PASSWORD = Base64.getEncoder().encodeToString(PASSWORD.getBytes(StandardCharsets.UTF_8));
+
+    public static UserDto getUserDto() {
+        return new UserDto(EMAIL, PASSWORD);
     }
 
-    public static String getDefaultEmail() {
-        return "test@test.com";
-    }
-
-    public static String getDefaultDifferentEmail() {
-        return "testDifferent@test.com";
-    }
-
-    public static String getDefaultPassword() {
-        return "test_test";
-    }
-
-    public static User getDefaultDifferentUser() {
-        User user = getDefaultUser();
-        user.setEmail(getDefaultDifferentEmail());
+    public static User getDifferentUser() {
+        User user = getUser();
+        user.setEmail(DIFFERENT_EMAIL);
         return user;
     }
 
-    public static User getDefaultUser() {
-        return new User(getDefaultEmail(), getDefaultPassword(), false, null);
+    public static User getUser() {
+        return new User(EMAIL, PASSWORD, false, null);
     }
 
     public static User getRegisteredUser() {
-        User user = getDefaultUser();
-        user.setEmail(getDefaultDifferentEmail());
-        user.setPassword(getEncodedPassword());
+        User user = getUser();
+        user.setEmail(DIFFERENT_EMAIL);
+        user.setPassword(ENCODED_PASSWORD);
         user.setEnabled(true);
         user.setRoles("ROLE_USER");
         return user;
     }
 
-    public static String getEncodedPassword() {
-        return Base64.getEncoder().encodeToString(getDefaultPassword().getBytes(StandardCharsets.UTF_8));
-    }
-
-    public static Recipe getDefaultRecipe() {
+    public static Recipe getRecipe() {
         return new Recipe(
                 "Green Tea",
                 "beverage",
-                LocalDateTime.of(2020, 1, 1, 10, 0, 0),
+                LocalDateTime.now(),
                 "Green tea improve brain function",
                 List.of("1 table spoon of green tea", "1 lemon slice"),
                 List.of("Place all ingredients in a mug", "Steep for 5-10 minutes"));
     }
 
-    public static Recipe getDefaultRecipeWithUser() {
-        Recipe defaultRecipeWithUser = getDefaultRecipe();
-        defaultRecipeWithUser.setUser(getDefaultUser());
+    public static Recipe getRecipeWithUser() {
+        Recipe defaultRecipeWithUser = getRecipe();
+        defaultRecipeWithUser.setUser(getUser());
         return defaultRecipeWithUser;
     }
 
-    public static Map<String, String> getWrongParam() {
+    private static Map<String, String> getWrongParam() {
         Map<String, String> params = new HashMap<>();
         params.put("test", "test");
         return params;
     }
 
-    public static Map<String, String> getCategoryParam() {
+    private static Map<String, String> getCategoryParam() {
         Map<String, String> params = new HashMap<>();
         params.put("category", "test");
         return params;
     }
 
-    public static Map<String, String> getNameParam() {
+    private static Map<String, String> getNameParam() {
         Map<String, String> params = new HashMap<>();
         params.put("name", "test");
         return params;

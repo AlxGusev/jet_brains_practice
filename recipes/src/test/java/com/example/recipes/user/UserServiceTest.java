@@ -31,20 +31,20 @@ class UserServiceTest {
 
     @Test
     public void givenEMail_whenRegisterNewUser_thenEmailAlreadyExists() {
-        when(userRepository.findByEmail(getDefaultEmail())).thenReturn(Optional.of(getDefaultUser()));
-        assertFalse(userService.registerNewUser(getDefaultUser()));
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(getUser()));
+        assertFalse(userService.registerNewUser(getUser()));
         verifyNoInteractions(passwordEncoder);
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     public void givenEmail_whenRegisterNewUser_thenSuccess() {
-        when(userRepository.findByEmail(getDefaultDifferentEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(getDefaultPassword())).thenReturn(getEncodedPassword());
+        when(userRepository.findByEmail(DIFFERENT_EMAIL)).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
 
-        assertTrue(userService.registerNewUser(getDefaultDifferentUser()));
+        assertTrue(userService.registerNewUser(getDifferentUser()));
 
-        verify(passwordEncoder).encode(getDefaultPassword());
+        verify(passwordEncoder).encode(PASSWORD);
         verify(userRepository, atMost(2)).save(getRegisteredUser());
     }
 

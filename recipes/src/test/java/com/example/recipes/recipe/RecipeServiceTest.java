@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 import java.util.Optional;
 
 import static com.example.recipes.utils.Utils.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -32,82 +34,124 @@ class RecipeServiceTest {
 
     @Test
     public void givenRecipeId_whenFindRecipeById_thenSuccess() {
-        recipeService.findRecipeById(1L);
-        verify(recipeRepository).findById(1L);
+
+        recipeService.findRecipeById(ID);
+
+        verify(recipeRepository).findById(ID);
     }
 
     @Test
     public void givenRecipeAndEmail_whenSaveRecipe_thenSuccess() {
-        when(userRepository.findByEmail(getDefaultEmail())).thenReturn(Optional.of(getDefaultUser()));
-        recipeService.saveRecipe(getDefaultRecipe(), getDefaultEmail());
-        verify(recipeRepository).save(getDefaultRecipeWithUser());
+
+        Recipe defaultRecipe = getRecipe();
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(getUser()));
+
+        recipeService.saveRecipe(defaultRecipe, EMAIL);
+        defaultRecipe.setUser(getUser());
+
+        verify(recipeRepository).save(defaultRecipe);
     }
 
     @Test
     public void givenRecipeAndEmail_whenSaveRecipe_thenNotFound() {
-        when(userRepository.findByEmail(getDefaultEmail())).thenReturn(Optional.empty());
-        recipeService.saveRecipe(getDefaultRecipe(), getDefaultEmail());
+
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+
+        recipeService.saveRecipe(getRecipe(), EMAIL);
+
         verifyNoInteractions(recipeRepository);
     }
 
     @Test
     public void givenIdAndRecipeAndEmail_whenUpdateRecipe_thenSuccess() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.of(getDefaultRecipeWithUser()));
-        recipeService.updateRecipe(1L, getDefaultRecipe(), getDefaultEmail());
-        verify(recipeRepository).save(getDefaultRecipeWithUser());
+
+        Recipe defaultRecipeWithUser = getRecipeWithUser();
+        when(recipeRepository.findById(ID)).thenReturn(Optional.of(defaultRecipeWithUser));
+
+        recipeService.updateRecipe(ID, getRecipe(), EMAIL);
+
+        verify(recipeRepository).save(defaultRecipeWithUser);
     }
 
     @Test
     public void givenIdAndRecipeAndEmail_whenUpdateRecipe_thenNotFound() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> recipeService.updateRecipe(1L, getDefaultRecipe(), getDefaultEmail()));
+
+        when(recipeRepository.findById(ID)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recipeService.updateRecipe(ID, getRecipe(), EMAIL));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        verifyNoMoreInteractions(recipeRepository);
     }
 
     @Test
     public void givenIdAndRecipeAndEmail_whenUpdateRecipe_thenForbidden() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.of(getDefaultRecipeWithUser()));
-        recipeService.updateRecipe(1L, getDefaultRecipe(), getDefaultDifferentEmail());
+
+        when(recipeRepository.findById(ID)).thenReturn(Optional.of(getRecipeWithUser()));
+
+        recipeService.updateRecipe(ID, getRecipe(), DIFFERENT_EMAIL);
+
         verifyNoMoreInteractions(recipeRepository);
     }
 
     @Test
     public void givenIdAndEmail_whenDeleteRecipe_thenSuccess() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.of(getDefaultRecipeWithUser()));
-        recipeService.deleteRecipe(1L, getDefaultEmail());
-        verify(recipeRepository).delete(getDefaultRecipeWithUser());
+
+        Recipe defaultRecipeWithUser = getRecipeWithUser();
+        when(recipeRepository.findById(ID)).thenReturn(Optional.of(defaultRecipeWithUser));
+
+        recipeService.deleteRecipe(ID, EMAIL);
+
+        verify(recipeRepository).delete(defaultRecipeWithUser);
     }
 
     @Test
     public void givenIdAndEmail_whenDeleteRecipe_thenNotFound() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> recipeService.deleteRecipe(1L, getDefaultEmail()));
+
+        when(recipeRepository.findById(ID)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> recipeService.deleteRecipe(ID, EMAIL));
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatus());
+        verifyNoMoreInteractions(recipeRepository);
     }
 
     @Test
     public void givenIdAndEmail_whenDeleteRecipe_thenForbidden() {
-        when(recipeRepository.findById(1L)).thenReturn(Optional.of(getDefaultRecipeWithUser()));
-        recipeService.deleteRecipe(1L, getDefaultDifferentEmail());
-        verify(recipeRepository).findById(1L);
+
+        when(recipeRepository.findById(ID)).thenReturn(Optional.of(getRecipeWithUser()));
+
+        recipeService.deleteRecipe(ID, DIFFERENT_EMAIL);
+
+        verify(recipeRepository).findById(ID);
         verifyNoMoreInteractions(recipeRepository);
     }
 
     @Test
     public void givenParameterCategory_whenFindAllByParameter_thenSuccess() {
-        Map<String, String> categoryParam = getCategoryParam();
+
+        Map<String, String> categoryParam = CATEGORY_PARAM;
+
         recipeService.findAllByParameter(categoryParam);
+
         verify(recipeRepository).findByCategoryIgnoreCaseOrderByDateDesc(categoryParam.get("category"));
     }
 
     @Test
     public void givenParameterName_whenFindAllByParameter_thenSuccess() {
-        Map<String, String> nameParam = getNameParam();
+
+        Map<String, String> nameParam = NAME_PARAM;
+
         recipeService.findAllByParameter(nameParam);
+
         verify(recipeRepository).findByNameIgnoreCaseContainingOrderByDateDesc(nameParam.get("name"));
     }
 
     @Test
     public void givenParameter_whenFindAllByParameter_thenNotFound() {
-        recipeService.findAllByParameter(getWrongParam());
+
+        recipeService.findAllByParameter(WRONG_PARAM);
+
         verifyNoInteractions(recipeRepository);
     }
 

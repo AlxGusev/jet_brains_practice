@@ -64,7 +64,7 @@ class UserRegistrationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/register")
                 .contentType("application/json;charset=UTF-8")
-                .content(mapper.writeValueAsString(getDefaultUserDto())))
+                .content(mapper.writeValueAsString(getUserDto())))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
@@ -72,18 +72,18 @@ class UserRegistrationControllerTest {
 
     @Test
     public void givenUserDto_whenRegister_thenSuccess() {
-        when(userService.registerNewUser(getDefaultUser())).thenReturn(true);
-        ResponseEntity<Object> responseEntity = controller.register(getDefaultUserDto());
+        when(userService.registerNewUser(getUser())).thenReturn(true);
+        ResponseEntity<Object> responseEntity = controller.register(getUserDto());
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        verify(userService, atMostOnce()).registerNewUser(getDefaultUser());
+        verify(userService, atMostOnce()).registerNewUser(getUser());
     }
 
     @Test
     public void givenUserDto_whenRegister_thenBadRequest() {
-        when(userService.registerNewUser(getDefaultUser())).thenReturn(false);
-        ResponseEntity<Object> responseEntity = controller.register(getDefaultUserDto());
+        when(userService.registerNewUser(getUser())).thenReturn(false);
+        ResponseEntity<Object> responseEntity = controller.register(getUserDto());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        verify(userService, atMostOnce()).registerNewUser(getDefaultDifferentUser());
+        verify(userService, atMostOnce()).registerNewUser(getDifferentUser());
     }
 
 }
