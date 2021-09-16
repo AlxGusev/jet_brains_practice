@@ -9,7 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static com.example.recipes.utils.Utils.*;
+import static com.example.recipes.utils.RecipeUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +31,9 @@ class UserServiceTest {
 
     @Test
     public void givenEMail_whenRegisterNewUser_thenEmailAlreadyExists() {
+
         when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(getUser()));
+
         assertFalse(userService.registerNewUser(getUser()));
         verifyNoInteractions(passwordEncoder);
         verifyNoMoreInteractions(userRepository);
@@ -39,6 +41,7 @@ class UserServiceTest {
 
     @Test
     public void givenEmail_whenRegisterNewUser_thenSuccess() {
+
         when(userRepository.findByEmail(DIFFERENT_EMAIL)).thenReturn(Optional.empty());
         when(passwordEncoder.encode(PASSWORD)).thenReturn(ENCODED_PASSWORD);
 

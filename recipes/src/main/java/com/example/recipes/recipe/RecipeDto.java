@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -19,7 +18,7 @@ public class RecipeDto {
     @NotBlank(message = "category shouldn't be empty")
     private String category;
 
-    private LocalDateTime date;
+    private String date;
 
     @NotBlank(message = "description shouldn't be empty")
     private String description;
@@ -39,7 +38,7 @@ public class RecipeDto {
         this.id = id;
     }
 
-    public RecipeDto(String name, String category, LocalDateTime date, String description, List<String> ingredients, List<String> directions) {
+    public RecipeDto(String name, String category, String date, String description, List<String> ingredients, List<String> directions) {
         this.name = name;
         this.category = category;
         this.date = date;
@@ -72,11 +71,11 @@ public class RecipeDto {
         this.category = category;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

@@ -6,9 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.example.recipes.utils.Utils.getRecipe;
+import static com.example.recipes.utils.RecipeUtils.getRecipe;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -34,7 +35,10 @@ class RecipeRepositoryTest {
         List<Recipe> recipesByCategory = repository.findByCategoryIgnoreCaseOrderByDateDesc(getRecipe().getCategory());
 
         assertThat(recipesByCategory.size()).isEqualTo(2);
-        assertThat(recipesByCategory.get(0).getDate()).isAfter(recipesByCategory.get(1).getDate());
+        assertThat(
+                LocalDateTime.parse(recipesByCategory.get(0).getDate())).
+                isAfter(
+                LocalDateTime.parse(recipesByCategory.get(1).getDate()));
     }
 
     @Test
@@ -51,7 +55,10 @@ class RecipeRepositoryTest {
         List<Recipe> recipeByName = repository.findByNameIgnoreCaseContainingOrderByDateDesc(getRecipe().getName());
 
         assertThat(recipeByName.size()).isEqualTo(2);
-        assertThat(recipeByName.get(0).getDate()).isAfter(recipeByName.get(1).getDate());
+        assertThat(
+                LocalDateTime.parse(recipeByName.get(0).getDate())).
+                isAfter(
+                LocalDateTime.parse(recipeByName.get(1).getDate()));
     }
 
     @Test

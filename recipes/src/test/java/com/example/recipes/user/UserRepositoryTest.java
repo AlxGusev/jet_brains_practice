@@ -7,8 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Optional;
 
-import static com.example.recipes.utils.Utils.EMAIL;
-import static com.example.recipes.utils.Utils.getUser;
+import static com.example.recipes.utils.RecipeUtils.EMAIL;
+import static com.example.recipes.utils.RecipeUtils.getUser;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest

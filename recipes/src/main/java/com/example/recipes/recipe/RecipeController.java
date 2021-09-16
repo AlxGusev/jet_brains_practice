@@ -13,9 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.example.recipes.recipe.RecipeController.BASE_URL;
+
 @RestController
-@RequestMapping("/api/recipe")
+@RequestMapping(BASE_URL)
 public class RecipeController {
+
+    public static final String BASE_URL = "/api/recipe";
 
     private final RecipeService recipeService;
 
@@ -36,7 +40,7 @@ public class RecipeController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Object> addRecipe(@Valid @RequestBody RecipeDto recipeDto, HttpServletRequest request) {
+    public ResponseEntity<Object> saveRecipe(@Valid @RequestBody RecipeDto recipeDto, HttpServletRequest request) {
 
         Recipe recipe = recipeService.saveRecipe(convertToEntity(recipeDto), request.getUserPrincipal().getName());
 
@@ -51,7 +55,7 @@ public class RecipeController {
 
         Recipe recipe = recipeService.updateRecipe(id, convertToEntity(recipeDto), request.getUserPrincipal().getName());
 
-        if (recipe.equals(convertToEntity(recipeDto))) {
+        if (recipe.getUser() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
@@ -97,7 +101,7 @@ public class RecipeController {
     }
 
     private Recipe convertToEntity(RecipeDto recipeDto) {
-        recipeDto.setDate(LocalDateTime.now());
+        recipeDto.setDate(String.valueOf(LocalDateTime.now()));
         return new Recipe(
                 recipeDto.getName(),
                 recipeDto.getCategory(),

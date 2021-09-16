@@ -3,7 +3,6 @@ package com.example.recipes.recipe;
 import com.example.recipes.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +17,7 @@ public class Recipe {
 
     private String category;
 
-    private LocalDateTime date;
+    private String date;
 
     private String description;
 
@@ -34,7 +33,7 @@ public class Recipe {
     public Recipe() {
     }
 
-    public Recipe(String name, String category, LocalDateTime date, String description, List<String> ingredients, List<String> directions) {
+    public Recipe(String name, String category, String date, String description, List<String> ingredients, List<String> directions) {
         this.name = name;
         this.category = category;
         this.date = date;
@@ -67,11 +66,11 @@ public class Recipe {
         this.category = category;
     }
 
-    public LocalDateTime getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

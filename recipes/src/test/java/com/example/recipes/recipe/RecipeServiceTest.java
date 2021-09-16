@@ -12,7 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.example.recipes.utils.Utils.*;
+import static com.example.recipes.utils.RecipeUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -44,10 +44,10 @@ class RecipeServiceTest {
     public void givenRecipeAndEmail_whenSaveRecipe_thenSuccess() {
 
         Recipe defaultRecipe = getRecipe();
-        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(getUser()));
-
-        recipeService.saveRecipe(defaultRecipe, EMAIL);
         defaultRecipe.setUser(getUser());
+
+        when(userRepository.findByEmail(EMAIL)).thenReturn(Optional.of(getUser()));
+        recipeService.saveRecipe(defaultRecipe, EMAIL);
 
         verify(recipeRepository).save(defaultRecipe);
     }

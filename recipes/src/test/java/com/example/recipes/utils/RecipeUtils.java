@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Utils {
+public class RecipeUtils {
 
     public static final Long ID = 1L;
     public static final String EMAIL = "test@test.com";
@@ -21,6 +21,10 @@ public class Utils {
     public static final Map<String, String> CATEGORY_PARAM = getCategoryParam();
     public static final Map<String, String> NAME_PARAM = getNameParam();
     public static final String ENCODED_PASSWORD = Base64.getEncoder().encodeToString(PASSWORD.getBytes(StandardCharsets.UTF_8));
+    public static final String BASE_URL_ID = "/api/recipe/{id}";
+    public static final String BASE_URL_NEW = "/api/recipe/new";
+    public static final String BASE_URL_SEARCH = "/api/recipe/search";
+
 
     public static UserDto getUserDto() {
         return new UserDto(EMAIL, PASSWORD);
@@ -46,13 +50,27 @@ public class Utils {
     }
 
     public static Recipe getRecipe() {
-        return new Recipe(
+        Recipe recipe = new Recipe(
                 "Green Tea",
                 "beverage",
-                LocalDateTime.now(),
+                String.valueOf(LocalDateTime.now()),
                 "Green tea improve brain function",
                 List.of("1 table spoon of green tea", "1 lemon slice"),
                 List.of("Place all ingredients in a mug", "Steep for 5-10 minutes"));
+        recipe.setId(ID);
+        return recipe;
+    }
+
+    public static Recipe getDifferentRecipe() {
+        Recipe recipe = new Recipe(
+                "Black Tea",
+                "beverage",
+                String.valueOf(LocalDateTime.now()),
+                "Green tea improve brain function",
+                List.of("1 table spoon of green tea", "1 lemon slice"),
+                List.of("Place all ingredients in a mug", "Steep for 5-10 minutes"));
+        recipe.setId(ID);
+        return recipe;
     }
 
     public static Recipe getRecipeWithUser() {
@@ -61,21 +79,25 @@ public class Utils {
         return defaultRecipeWithUser;
     }
 
-    private static Map<String, String> getWrongParam() {
+    public static Map<String, String> getWrongParam() {
         Map<String, String> params = new HashMap<>();
         params.put("test", "test");
         return params;
     }
 
-    private static Map<String, String> getCategoryParam() {
+    public static Map<String, String> getCategoryParam() {
         Map<String, String> params = new HashMap<>();
-        params.put("category", "test");
+        params.put("category", "beverage");
         return params;
     }
 
-    private static Map<String, String> getNameParam() {
+    public static Map<String, String> getNameParam() {
         Map<String, String> params = new HashMap<>();
-        params.put("name", "test");
+        params.put("name", "Green Tea");
         return params;
+    }
+
+    public static List<Recipe> getListOfRecipes() {
+        return List.of(getRecipe(), getRecipe());
     }
 }
